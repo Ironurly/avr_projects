@@ -4808,37 +4808,37 @@ FRESULT f_closedir (
 /* API: Read Directory Entries in Sequence                               */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_readdir (
-	DIR* dp,			/* Pointer to the open directory object */
-	FILINFO* fno		/* Pointer to file information to return */
-)
-{
-	FRESULT res;
-	FATFS *fs;
-	DEF_NAMEBUFF
+// FRESULT f_readdir (
+// 	DIR* dp,			/* Pointer to the open directory object */
+// 	FILINFO* fno		/* Pointer to file information to return */
+// )
+// {
+// 	FRESULT res;
+// 	FATFS *fs;
+// 	DEF_NAMEBUFF
 
 
-	res = validate(&dp->obj, &fs);	/* Check validity of the directory object */
-	if (res == FR_OK) {
-		if (!fno) {
-			res = dir_sdi(dp, 0);		/* Rewind the directory object */
-		} else {
-			INIT_NAMEBUFF(fs);
-			fno->fname[0] = 0;				/* Clear file information */
-			res = DIR_READ_FILE(dp);		/* Read an item */
-			if (res == FR_NO_FILE) res = FR_OK;	/* Ignore end of directory */
-			if (res == FR_OK) {				/* A valid entry is found */
-				get_fileinfo(dp, fno);		/* Get the object information */
-				res = dir_next(dp, 0);		/* Increment index for next */
-				if (res == FR_NO_FILE) res = FR_OK;	/* Ignore end of directory now */
-			}
-			FREE_NAMEBUFF();
-		}
-	}
+// 	res = validate(&dp->obj, &fs);	/* Check validity of the directory object */
+// 	if (res == FR_OK) {
+// 		if (!fno) {
+// 			res = dir_sdi(dp, 0);		/* Rewind the directory object */
+// 		} else {
+// 			INIT_NAMEBUFF(fs);
+// 			fno->fname[0] = 0;				/* Clear file information */
+// 			res = DIR_READ_FILE(dp);		/* Read an item */
+// 			if (res == FR_NO_FILE) res = FR_OK;	/* Ignore end of directory */
+// 			if (res == FR_OK) {				/* A valid entry is found */
+// 				get_fileinfo(dp, fno);		/* Get the object information */
+// 				res = dir_next(dp, 0);		/* Increment index for next */
+// 				if (res == FR_NO_FILE) res = FR_OK;	/* Ignore end of directory now */
+// 			}
+// 			FREE_NAMEBUFF();
+// 		}
+// 	}
 
-	if (fno && res != FR_OK) fno->fname[0] = 0;	/* Clear the file information if any error occured */
-	LEAVE_FF(fs, res);
-}
+// 	if (fno && res != FR_OK) fno->fname[0] = 0;	/* Clear the file information if any error occured */
+// 	LEAVE_FF(fs, res);
+// }
 
 
 

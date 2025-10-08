@@ -3,6 +3,8 @@
     "files.associations": {
         "pff.h": "c",
         "diskio.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "ff.h": "c",
+        "stdlib.h": "c"
     }
 }

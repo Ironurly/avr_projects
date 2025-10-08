@@ -1,6 +1,7 @@
 #include "config.h"
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdlib.h>
 #include <string.h>
 #include "ff.h"
 #include "diskio.h"
@@ -47,57 +48,101 @@ void blink(int type, int amount){
     }
 }
 
-int main(void) {
-    init_leds();
-    _delay_ms(2000);
-    
-    blink(1, 1);  // Старт программы
-    
-    DSTATUS disk_init_status = disk_initialize(0);
-    if (disk_init_status != 0) {
-        blink(2, 1);
-    }
-    
-    blink(1, 2);  // SD карта инициализирована
-    
-    // Монтирование файловой системы
+int write_to_file( const char * file_name, const char * text_input )
+{
+    disk_initialize(0);
+
     FATFS fs;
-    FRESULT mount_status = f_mount(&fs, "", 1);
-    if (mount_status != FR_OK) {
-        blink(2, 2);
-    }
-    
-    blink(1, 3);  // Файловая система смонтирована
-    
-    // Создание и запись в файл
+    f_mount(&fs, "", 1);
+
     FIL fil;
     UINT bw;
-    const char* text = "Hello from AVR FatFs!\n";
+
+    FRESULT res = f_open(&fil, file_name, FA_WRITE | FA_CREATE_ALWAYS);
     
-    // Открываем/создаем файл
-    FRESULT res = f_open(&fil, "test.txt", FA_WRITE | FA_CREATE_ALWAYS);
-    if (res != FR_OK) {
+    if (res != FR_OK) 
+    {
         f_mount(0, "", 0);
-        blink(2, 3);
+        return 1;
     }
-    
-    blink(1, 4);  // Файл открыт
-    
-    // Записываем данные
-    res = f_write(&fil, text, strlen(text), &bw);
-    if (res != FR_OK || bw != strlen(text)) {
+
+    res = f_write(&fil, text_input, strlen(text_input), &bw);
+    if (res != FR_OK || bw != strlen(text_input)) 
+    {
         f_close(&fil);
         f_mount(0, "", 0);
-        blink(2, 4);
+        return 2;
     }
-    
-    blink(1, 5);  // Данные записаны
     
     // Закрываем файл
     f_close(&fil);
     
     // Размонтируем файловую систему
     f_mount(0, "", 0);
+
+    return 0;
+}
+
+// Функция для чтения строки из файла
+int read_string_from_file(const char *filename, char *result, int result_size) {
+    
+    disk_initialize(0);
+
+    FATFS fs;
+    f_mount(&fs, "", 1);
+
+    FIL file;
+    FRESULT res;
+    UINT bytes_read;
+    
+    // Открываем файл для чтения
+    res = f_open(&file, filename, FA_READ);
+    if (res != FR_OK) {
+        f_mount(0, "", 0);
+        return 1;  // Ошибка открытия файла
+    }
+    
+    // Читаем данные из файла в переданный буфер
+    res = f_read(&file, result, result_size - 1, &bytes_read);
+    if (res != FR_OK) {
+        f_close(&file);
+        f_mount(0, "", 0);
+        return 2;  // Ошибка чтения
+    }
+    
+    // Закрываем файл
+    f_close(&file);
+    
+    // Добавляем нуль-терминатор для создания строки
+    result[bytes_read] = '\0';
+    f_mount(0, "", 0);
+    return 0;
+}
+
+int main(void) {
+    init_leds();
+    _delay_ms(2000);
+
+    const char* text = "10\n";
+    char result[32];  // Используем массив вместо динамического выделения
+    int error_code;
+    
+    // Открываем/создаем файл
+    blink(1, 1);  // Файл открыт
+    write_to_file("test1.txt", text);
+    blink(1, 3);  // Файл открыт
+    
+    // Читаем из файла
+    error_code = read_string_from_file("test1.txt", result, sizeof(result));
+    
+    if (error_code == 0) {
+        // Преобразуем строку в число
+        int amount = atoi(result);
+        blink(2, amount);
+    } else {
+        // Обработка ошибки
+        blink(2, error_code);  // Мигаем кодом ошибки
+    }
     
     // Успех - бесконечное быстрое мигание
     while(1) {
