@@ -1,0 +1,202 @@
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+#include <string.h>
+#include <stdlib.h>
+
+// SPI pins
+#define MISO_PIN   4 // PB4
+#define MOSI_PIN   3 // PB3  
+#define SCK_PIN    5 // PB5
+#define CS_PIN     2 // PB2
+
+#define CS_LOW   PORTB &= ~(1 << CS_PIN)
+#define CS_HIGH  PORTB |= (1 << CS_PIN)
+
+unsigned char sdrx_buff[512];
+unsigned long int blokWR = 0;  
+unsigned int sizeWR = 0;
+unsigned char wr = 0;
+
+// ?????? SPI ???????
+void spi_sendbyte(unsigned char data) {
+    unsigned char i;
+    for (i = 0; i < 8; i++) {
+        if ((data & 0x80) == 0x00)
+            PORTB &= ~(1 << MOSI_PIN);
+        else
+            PORTB |= (1 << MOSI_PIN);
+        data = data << 1;
+        PORTB |= (1 << SCK_PIN);
+        _delay_us(10);
+        PORTB &= ~(1 << SCK_PIN);
+        _delay_us(10);
+    }
+}
+
+unsigned char spi_receivebyte(void) {
+    unsigned char i, res = 0;
+    PORTB |= (1 << MISO_PIN);
+    for (i = 0; i < 8; i++) {
+        PORTB |= (1 << SCK_PIN);
+        res = res << 1;
+        if ((PINB & (1 << MOSI_PIN)) != 0x00)
+            res = res | 0x01;
+        PORTB &= ~(1 << SCK_PIN);
+        _delay_us(10);
+    }
+    return res;
+}
+
+unsigned char SD_cmd(unsigned char dt0, unsigned long int arg, unsigned char dt5) {
+    unsigned char result;
+    unsigned long int cnt;
+    
+    spi_sendbyte(dt0);
+    spi_sendbyte(((arg & 0xFF000000) >> 24));
+    spi_sendbyte(((arg & 0x00FF0000) >> 16)); 
+    spi_sendbyte(((arg & 0x0000FF00) >> 8));
+    spi_sendbyte(((arg & 0x000000FF)));
+    spi_sendbyte(dt5);
+    
+    cnt = 0;
+    do {
+        result = spi_receivebyte();
+        cnt++;
+    } while (((result & 0x80) != 0x00) && (cnt < 0xFFFF));
+    
+    return result;
+}
+
+unsigned char SD_Init(void) {
+    unsigned char i, temp;
+    unsigned long int cnt;
+    
+    // ????????? ?????
+    DDRB |= (1 << MOSI_PIN) | (1 << SCK_PIN) | (1 << CS_PIN);
+    DDRB &= ~(1 << MISO_PIN);
+    PORTB |= (1 << MISO_PIN);
+    
+    CS_HIGH;
+    _delay_ms(500);
+    
+    // 80+ ?????? ??? ?????????????
+    for (i = 0; i < 10; i++)            
+        spi_sendbyte(0xFF);
+    
+    CS_LOW;
+    
+    // CMD0 - Reset
+    temp = SD_cmd(0x40, 0x00, 0x95);
+    if (temp != 0x01) {
+        CS_HIGH;
+        return 1;
+    }
+    
+    spi_sendbyte(0xFF);
+    
+    cnt = 0;
+    do {
+        // CMD1 - Init
+        temp = SD_cmd(0x41, 0x00, 0x95);
+        spi_sendbyte(0xFF);
+        cnt++;
+        _delay_ms(10);
+    } while ((temp != 0x00) && (cnt < 1000));
+    
+    CS_HIGH;
+    
+    if (cnt >= 1000) 
+        return 2;
+    
+    return 0;
+}
+
+unsigned char SD_Write_Block(char* bf, unsigned long int blok) {
+    unsigned char result;
+    unsigned long int cnt, arg; 
+    
+    arg = blok * 512;
+    result = SD_cmd(0x58, arg, 0x95); // CMD24
+    
+    if (result != 0x00) return 1;
+    
+    spi_sendbyte(0xFF);
+    spi_sendbyte(0xFE); // ?????? ??????
+    
+    for (cnt = 0; cnt < 512; cnt++)
+        spi_sendbyte(bf[cnt]); // ??????
+        
+    spi_sendbyte(0xFF); // ??????????? ?????
+    spi_sendbyte(0xFF);
+    
+    result = spi_receivebyte();
+    if ((result & 0x05) != 0x05) return 2;
+    
+    cnt = 0;
+    do {
+        result = spi_receivebyte();
+        cnt++;
+    } while ((result != 0xFF) && (cnt < 10000));
+    
+    if (cnt >= 10000) return 3;
+    
+    return 0;
+}
+
+// ?????? ?????????? ?????
+void write_text_file(void) {
+    char buffer[512];
+    
+    memset(buffer, 0, 512);
+    char* text = 
+        "=== TEST.TXT ===\r\n"
+        "This file was created by ATmega328P!\r\n"
+        "Hello World from microcontroller!\r\n"
+        "If you can read this, it works! :)\r\n";
+    
+    strcpy(buffer, text);
+    
+    if(SD_Write_Block(buffer, 1000) == 0) {
+        // ????? - ??????? ???????
+        DDRD |= (1 << PD5);
+        while(1) {
+            PORTD ^= (1 << PD5);
+            _delay_ms(100);
+        }
+    } else {
+        // ?????? - ????????? ???????
+        DDRD |= (1 << PD5);
+        while(1) {
+            PORTD ^= (1 << PD5);
+            _delay_ms(1000);
+        }
+    }
+}
+
+int main(void) {
+    _delay_ms(1000);
+    
+    DDRD |= (1 << PD5);
+    PORTD |= (1 << PD5);
+    _delay_ms(1000);
+    PORTD &= ~(1 << PD5);
+    _delay_ms(1000);
+    
+    if(SD_Init() == 0) {
+        write_text_file();
+    } else {
+        DDRD |= (1 << PD5);
+        while(1) {
+            for(int i = 0; i < 3; i++) {
+                PORTD |= (1 << PD5);
+                _delay_ms(300);
+                PORTD &= ~(1 << PD5);
+                _delay_ms(300);
+            }
+            _delay_ms(2000);
+        }
+    }
+    
+    return 0;
+}

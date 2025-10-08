@@ -1,0 +1,87 @@
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+
+// Пины
+#define MISO_PIN   4 // PB4
+#define MOSI_PIN   3 // PB3  
+#define SCK_PIN    5 // PB5
+#define CS_PIN     2 // PB2
+
+#define CS_LOW   PORTB &= ~(1 << CS_PIN)
+#define CS_HIGH  PORTB |= (1 << CS_PIN)
+
+void spi_sendbyte(unsigned char data) {
+    for(unsigned char i = 0; i < 8; i++) {
+        if(data & 0x80) PORTB |= (1 << MOSI_PIN);
+        else PORTB &= ~(1 << MOSI_PIN);
+        data <<= 1;
+        PORTB |= (1 << SCK_PIN);
+        _delay_us(10);
+        PORTB &= ~(1 << SCK_PIN);
+        _delay_us(10);
+    }
+}
+
+unsigned char spi_receivebyte(void) {
+    unsigned char data = 0;
+    for(unsigned char i = 0; i < 8; i++) {
+        data <<= 1;
+        PORTB |= (1 << SCK_PIN);
+        _delay_us(10);
+        if(PINB & (1 << MISO_PIN)) data |= 1;
+        PORTB &= ~(1 << SCK_PIN);
+        _delay_us(10);
+    }
+    return data;
+}
+
+int main(void) {
+    _delay_ms(1000);
+    
+    // Настройка пинов
+    DDRB |= (1 << MOSI_PIN) | (1 << SCK_PIN) | (1 << CS_PIN);
+    DDRB &= ~(1 << MISO_PIN);
+    PORTB |= (1 << MISO_PIN); // Подтяжка
+    
+    DDRD |= (1 << PD5); // Светодиод
+    
+    // Индикация старта
+    PORTD |= (1 << PD5);
+    _delay_ms(1000);
+    PORTD &= ~(1 << PD5);
+    _delay_ms(1000);
+    
+    // Пробуем CMD0
+    CS_LOW;
+    spi_sendbyte(0x40); // CMD0
+    spi_sendbyte(0x00);
+    spi_sendbyte(0x00);
+    spi_sendbyte(0x00);
+    spi_sendbyte(0x00);
+    spi_sendbyte(0x95);
+    
+    // Ждем ответ
+    for(int i = 0; i < 100; i++) {
+        unsigned char response = spi_receivebyte();
+        if(response == 0x01) {
+            // УСПЕХ CMD0!
+            CS_HIGH;
+            while(1) {
+                PORTD ^= (1 << PD5);
+                _delay_ms(100); // Быстрое мигание - УСПЕХ
+            }
+        }
+        _delay_ms(1);
+    }
+    
+    CS_HIGH;
+    
+    // ОШИБКА
+    while(1) {
+        PORTD ^= (1 << PD5);
+        _delay_ms(1000); // Медленное мигание - ОШИБКА
+    }
+    
+    return 0;
+}

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<!-- saved from url=(0033)https://neurofox.ru/el/arduino_sd -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Протокол SD Card — Лисья нора</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" href="https://neurofox.ru/el/arduino_sd">
+    <link rel="stylesheet" href="./Протокол SD Card — Лисья нора_files/font-awesome.min.css">
+    <link rel="stylesheet" href="./Протокол SD Card — Лисья нора_files/neurofox.css">
+    <link rel="stylesheet" href="./Протокол SD Card — Лисья нора_files/codify.css">
+    <link rel="stylesheet" href="./Протокол SD Card — Лисья нора_files/mobile.css">
+    <script type="text/javascript" src="./Протокол SD Card — Лисья нора_files/jquery.min.js"></script>
+    <script type="text/javascript" src="./Протокол SD Card — Лисья нора_files/site.js"></script>
+</head>
+<body>
+
+<!-- Google tag (gtag.js) -->
+<script async="" src="./Протокол SD Card — Лисья нора_files/js"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-G40XX4P5XQ');
+</script>
+
+
+<div id="content">
+
+    <div class="windows-header"><div class="windows-lightbox">
+    <div class="windows-lightbox-lf">
+    <b><a href="https://neurofox.ru/profile/" class="fa fa-sign-in"></a></b> <span id="kuranty" data-time="1759181670000">00:38</span>    </div>
+</div>
+
+<div class="title">Протокол SD Card — Лисья нора</div>
+</div>
+    <div id="main">
+        <div class="main-lf">
+            <div class="tab-top"><a class="tab" href="https://neurofox.ru/main/"><div class="lf"><div class="rt">Главная</div></div></a><a class="tab" href="https://neurofox.ru/news/"><div class="lf"><div class="rt">Лента</div></div></a><a class="tab" href="https://neurofox.ru/blog/"><div class="lf"><div class="rt">Блог</div></div></a><a class="tab" href="https://neurofox.ru/service/"><div class="lf"><div class="rt">Сервисы</div></div></a><a class="tab active" href="https://neurofox.ru/el/"><div class="lf"><div class="rt">ПЛИС</div></div></a></div>
+            <div class="main-content">
+                <div class="breadcrumby"><a href="https://neurofox.ru/">Главная</a> » <a href="https://neurofox.ru/el">ПЛИС</a> » Протокол SD Card</div>
+
+<h2 id="raspinovka">§ <u>Распиновка </u></h2><div class="ebr"></div>Я использую SD-карту для подключения ее через SPI, и причем для Arduino. На картинке (не знаю, откуда взято), приведена распиновка для разных карт разных форм-факторов.<br><div class="ebr"></div>Для разных карт существуют разные выводные пины. Порт DI - это MOSI с точки зрения контроллера, а порт DO - это MISO. То, как расположены контакты, жутко странно, но что поделать, такова жизнь.<br><div class="ebr"></div><img src="./Протокол SD Card — Лисья нора_files/sd_pins.png" height="256" style="vertical-align: top">
+<table class="border mono" style="display: inline-block">
+    <tbody><tr><th rowspan="2">PIN</th><th colspan="2">MicroSD</th><th colspan="2">SD</th></tr>
+    <tr><th>SD</th><th>SPI</th><th>SD</th><th>SPI</th></tr>
+
+    <tr><th>1</th><td>DAT2</td>     <td></td><td>DAT3/CD</td><td>CS</td></tr>
+    <tr><th>2</th><td>DAT3/CD</td>  <td>CS</td><td>CMD</td><td>DI</td></tr>
+    <tr><th>3</th><td>CMD</td>      <td>DI</td><td>Gnd2</td><td></td></tr>
+    <tr><th>4</th><td colspan="4" class="gray">(+) VCC</td></tr>
+    <tr><th>5</th><td colspan="4">CLK</td></tr>
+    <tr><th>6</th><td colspan="4" class="gray">(-) GND</td></tr>
+    <tr><th>7</th><td>DAT0</td>     <td>DO</td><td>DAT0</td><td>DO</td></tr>
+    <tr><th>8</th><td>DAT1</td>     <td></td><td>DAT1</td><td></td></tr>
+    <tr><th>9</th><td></td>         <td></td><td>DAT2</td><td></td></tr>
+
+</tbody></table><div class="ebr"></div><h2 id="initsializatsiya_spi">§ <u>Инициализация SPI </u></h2><div class="ebr"></div>Что требуется для того, чтобы начать общаться с микроконтроллером, всаженном в sd-карту?<br><div class="ebr"></div><ul><li> Для начала, надо настроить SPI на скорость 125 кГц (вообще от 100 кГц до 400 кГц разрешено).</li><li> Во-вторых, подать на пин CS=1 (высокий уровень), а также на MOSI=1 (т.е. DI у карты)</li><li> Далее, сделать минимум 74 тактов на CLK=0 и 1, подать LOW и HIGH аж 74 раза, и больше. Я делаю 80 тактов.</li></ul><div class="ebr"></div>Когда эти все действия сделаны, то можно с некоторой уверенностью считать, что карта поняла, что мы перешли в режим SPI.<br><div class="ebr"></div><h2 id="opredelenie_tipa_karty">§ <u>Определение типа карты </u></h2><div class="ebr"></div>Это очень сложный и трудоемкий этап, который не нужно запоминать, но нужна конкретная шпаргалка. Здесь важен обмен командами, речь о которых позже. Вот так происходит определение.<br><div class="ebr"></div><table class="border">
+    <tbody><tr><th>ШАГ</th><th>Описание шага</th></tr>
+    <tr>
+        <th>1</th>
+        <td>Отсылка <b>CMD0</b> с аргументом 0. Должен вернуть ответ 0x01.
+            Если его не вернул, то амбец, карта не работает.</td>
+    </tr>
+    <tr>
+        <th>2</th>
+        <td>Отсылка <b>CMD8</b> с аргументом <b>0x000001AA</b> . Если в ответе установлен бит 2
+            (проверить через &amp; 0x04), то это жестоко устаревшая в хлам карта версии 1,
+            которая не поддерживает чтение и запись целыми блоками по 512 байт. Перейти к шагу 4</td>
+    </tr>
+    <tr>
+        <th>3</th>
+        <td>Принять 4 байта ответа от команды. Если последний байт ответа не равен 0xAA,
+            то куница накрыла медным тазом карту и пора задуматься о будущем.
+            Но если там есть эти 0xAA то карта считается версии 2.
+        </td>
+    </tr>
+    <tr>
+        <th>4</th>
+        <td>Сначала отослать сначала <b>CMD55</b> с аргументом 0. Если карта версии 2, то отослать
+            <b>CMD29</b> с аргументом 0x40000000 (ух ничего себе число, а), иначе отослать аргумент 0.
+            Если ответ от карты не 0x00, то еще раз отослать ту же самую команду (повторить шаг 4),
+            и повторять так, пока не опупеешь, или пока время не выйдет (например 2 секунды)
+        </td>
+    </tr>
+    <tr>
+        <th>5</th>
+        <td>Если у нас карта версии 2, то отослать команду <b>CMD58</b> с аргументом 0, потом прочесть байт,
+            и если что-то вернется с карты, то приключилась какая-то байда и пора вырубать всё и
+            ложиться - карта не работает.</td>
+    </tr>
+    <tr>
+        <th>6</th>
+        <td>Прочитать байт, если биты 6 и 7 будут установлены - это не просто версия 2 карты,
+        это еще и SDHC (High Capacity), а именно современная карта, которая поддерживает
+        чуть ли не 128 Гб памяти, вот так вот. </td>
+    </tr>
+    <tr>
+        <th>7</th>
+        <td>Прочесть 3 байта, игнорировать их</td>
+    </tr>
+    <tr>
+        <th>8</th>
+        <td>Установить CS=1 (деактивировать на время, чтобы не жрало питалово)</td>
+    </tr>
+</tbody></table><div class="ebr"></div>Вот такой вот лютый ад предстоит выполнить, чтобы все было хорошо (или не очень хорошо). Лично я проверил на своей Arduino Uno с Datalogging Shield, все работает. Код в студию:<br><div class="ebr"></div><h2 id="ishodnye_kody">§ <u>Исходные коды </u></h2><div class="ebr"></div><pre class="code code-c"><span class="line-id" style="display: none">1</span><span class="comment">// Инициализация карты</span>
+<span class="line-id" style="display: none">2</span><span class="keyword">void</span> SD_init() {
+<span class="line-id" style="display: none">3</span>
+<span class="line-id" style="display: none">4</span>    <span class="keyword">unsigned</span> <span class="keyword">char</span> i, status = <span class="numeric">0xFF</span>;
+<span class="line-id" style="display: none">5</span>    <span class="keyword">unsigned</span> <span class="keyword">long</span> arg;
+<span class="line-id" style="display: none">6</span>
+<span class="line-id" style="display: none">7</span>    <span class="comment">// Вначале все вроде как ОК</span>
+<span class="line-id" style="display: none">8</span>    SD_error = <span class="defs">SD_OK</span>;
+<span class="line-id" style="display: none">9</span>    SD_type  = <span class="defs">SD_CARD_TYPE_ERR</span>;
+<span class="line-id" style="display: none">10</span>
+<span class="line-id" style="display: none">11</span>    <span class="comment">// Отключить устройство</span>
+<span class="line-id" style="display: none">12</span>    SPI_ce(<span class="numeric">1</span>);
+<span class="line-id" style="display: none">13</span>
+<span class="line-id" style="display: none">14</span>    <span class="comment">// Подать 80 тактов, которые переведут устройство в режим SPI</span>
+<span class="line-id" style="display: none">15</span>    <span class="keyword">for</span> (i = <span class="numeric">0</span>; i &lt; <span class="numeric">10</span>; i++) SPI_put(<span class="numeric">0xFF</span>);
+<span class="line-id" style="display: none">16</span>
+<span class="line-id" style="display: none">17</span>    <span class="comment">// Сброс. Должен быть ответ 01h</span>
+<span class="line-id" style="display: none">18</span>    <span class="keyword">if</span> (SD_command(<span class="defs">SD_CMD0</span>, <span class="numeric">0</span>) != <span class="defs">R1_IDLE_STATE</span>) {
+<span class="line-id" style="display: none">19</span>        SD_error = SD_UnknownError; SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span>;
+<span class="line-id" style="display: none">20</span>    }
+<span class="line-id" style="display: none">21</span>
+<span class="line-id" style="display: none">22</span>    <span class="comment">// Определить тип карты (SD1)</span>
+<span class="line-id" style="display: none">23</span>    <span class="keyword">if</span> (SD_command(<span class="defs">SD_CMD8</span>, <span class="numeric">0x1AA</span>) &amp; <span class="defs">R1_ILLEGAL_COMMAND</span>) {
+<span class="line-id" style="display: none">24</span>        SD_type = <span class="defs">SD_CARD_TYPE_SD1</span>;
+<span class="line-id" style="display: none">25</span>
+<span class="line-id" style="display: none">26</span>    } <span class="keyword">else</span> {
+<span class="line-id" style="display: none">27</span>
+<span class="line-id" style="display: none">28</span>        <span class="comment">// Прочесть 4 байта, последний будет важный</span>
+<span class="line-id" style="display: none">29</span>        <span class="keyword">for</span> (i = <span class="numeric">0</span>; i &lt; <span class="numeric">4</span>; i++) status = SPI_get();
+<span class="line-id" style="display: none">30</span>
+<span class="line-id" style="display: none">31</span>        <span class="comment">// Неизвестный тип карты</span>
+<span class="line-id" style="display: none">32</span>        <span class="keyword">if</span> (status != <span class="numeric">0xAA</span>) {
+<span class="line-id" style="display: none">33</span>            SD_error = SD_UnknownCard; SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span>;
+<span class="line-id" style="display: none">34</span>        }
+<span class="line-id" style="display: none">35</span>
+<span class="line-id" style="display: none">36</span>        <span class="comment">// Это тип карты SD2</span>
+<span class="line-id" style="display: none">37</span>        SD_type = <span class="defs">SD_CARD_TYPE_SD2</span>;
+<span class="line-id" style="display: none">38</span>    }
+<span class="line-id" style="display: none">39</span>
+<span class="line-id" style="display: none">40</span>    <span class="comment">// Инициализация карты и отправка кода поддержки SDHC если SD2</span>
+<span class="line-id" style="display: none">41</span>    i   = <span class="numeric">0</span>;
+<span class="line-id" style="display: none">42</span>    arg = (SD_type == <span class="defs">SD_CARD_TYPE_SD2</span> ? <span class="numeric">0x40000000</span> : <span class="numeric">0</span>);
+<span class="line-id" style="display: none">43</span>
+<span class="line-id" style="display: none">44</span>    <span class="comment">// Отсылка ACMD41 = 0x29. Отсылать и ждать, пока не придет корректный ответ</span>
+<span class="line-id" style="display: none">45</span>    <span class="keyword">while</span> ((status = SD_acmd(<span class="numeric">0x29</span>, arg)) != <span class="defs">R1_READY_STATE</span>) {
+<span class="line-id" style="display: none">46</span>
+<span class="line-id" style="display: none">47</span>        <span class="comment">// Если таймаут вышел</span>
+<span class="line-id" style="display: none">48</span>        <span class="keyword">if</span> (i++ &gt; <span class="defs">SD_TIMEOUT_CNT</span>) {
+<span class="line-id" style="display: none">49</span>            SD_error = SD_AcmdError; SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span>;
+<span class="line-id" style="display: none">50</span>        }
+<span class="line-id" style="display: none">51</span>    }
+<span class="line-id" style="display: none">52</span>
+<span class="line-id" style="display: none">53</span>    <span class="comment">// Если SD2, читать OCR регистр для проверки SDHC карты</span>
+<span class="line-id" style="display: none">54</span>    <span class="keyword">if</span> (SD_type == <span class="defs">SD_CARD_TYPE_SD2</span>) {
+<span class="line-id" style="display: none">55</span>
+<span class="line-id" style="display: none">56</span>        <span class="comment">// Проверка наличия байта в ответе CMD58 (должно быть 0)</span>
+<span class="line-id" style="display: none">57</span>        <span class="keyword">if</span> (SD_command(<span class="defs">SD_CMD58</span>, <span class="numeric">0</span>)) {
+<span class="line-id" style="display: none">58</span>            SD_error = SD_Unknown58CMD; SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span>;
+<span class="line-id" style="display: none">59</span>        }
+<span class="line-id" style="display: none">60</span>
+<span class="line-id" style="display: none">61</span>        <span class="comment">// Прочесть ответ от карты и определить тип (SDHC если есть)</span>
+<span class="line-id" style="display: none">62</span>        <span class="keyword">if</span> ((SPI_get() &amp; <span class="numeric">0xC0</span>) == <span class="numeric">0xC0</span>) {
+<span class="line-id" style="display: none">63</span>            SD_type = <span class="defs">SD_CARD_TYPE_SDHC</span>;
+<span class="line-id" style="display: none">64</span>        }
+<span class="line-id" style="display: none">65</span>
+<span class="line-id" style="display: none">66</span>        <span class="comment">// Удалить остатки от OCR</span>
+<span class="line-id" style="display: none">67</span>        <span class="keyword">for</span> (i = <span class="numeric">0</span>; i &lt; <span class="numeric">3</span>; i++) SPI_get();
+<span class="line-id" style="display: none">68</span>    }
+<span class="line-id" style="display: none">69</span>
+<span class="line-id" style="display: none">70</span>    <span class="comment">// Выключить чип</span>
+<span class="line-id" style="display: none">71</span>    SPI_ce(<span class="numeric">1</span>);
+<span class="line-id" style="display: none">72</span>}</pre><div class="code-line-block"><a href="https://neurofox.ru/el/arduino_sd#" onclick="$(&quot;.line-id&quot;).toggle(); return false;">Номера</a></div><div class="ebr"></div><h2 id="otsylka_komandy">§ <u>Отсылка команды </u></h2><div class="ebr"></div>Я не стал никого томить и код сразу оказался в студии:<br><div class="ebr"></div><pre class="code code-c"><span class="line-id" style="display: none">1</span><span class="comment">// Результат выполнения команды</span>
+<span class="line-id" style="display: none">2</span><span class="keyword">unsigned</span> <span class="keyword">char</span> SD_command(<span class="keyword">unsigned</span> <span class="keyword">char</span> cmd, <span class="keyword">unsigned</span> <span class="keyword">long</span> arg) {
+<span class="line-id" style="display: none">3</span>
+<span class="line-id" style="display: none">4</span>    <span class="keyword">int</span> i = <span class="numeric">0</span>;
+<span class="line-id" style="display: none">5</span>    <span class="keyword">unsigned</span> <span class="keyword">char</span> status;
+<span class="line-id" style="display: none">6</span>    <span class="keyword">unsigned</span> <span class="keyword">char</span> crc = <span class="numeric">0xFF</span>;
+<span class="line-id" style="display: none">7</span>
+<span class="line-id" style="display: none">8</span>    <span class="comment">// Перевести в активный режим</span>
+<span class="line-id" style="display: none">9</span>    SPI_ce(<span class="numeric">0</span>);
+<span class="line-id" style="display: none">10</span>
+<span class="line-id" style="display: none">11</span>    <span class="comment">// Подождать ответ в течении определенного времени</span>
+<span class="line-id" style="display: none">12</span>    <span class="keyword">while</span> (i &lt; <span class="defs">SD_TIMEOUT_CNT</span>) { status = SPI_get(); <span class="keyword">if</span> (status == <span class="numeric">0xff</span>) <span class="keyword">break</span>; i++; }
+<span class="line-id" style="display: none">13</span>
+<span class="line-id" style="display: none">14</span>    <span class="comment">// Ошибка</span>
+<span class="line-id" style="display: none">15</span>    <span class="keyword">if</span> (i &gt;= <span class="defs">SD_TIMEOUT_CNT</span>) { SD_error = SD_TimeoutError; <span class="keyword">return</span> <span class="numeric">0xff</span>; }
+<span class="line-id" style="display: none">16</span>
+<span class="line-id" style="display: none">17</span>    <span class="comment">// Отсылка команды</span>
+<span class="line-id" style="display: none">18</span>    SPI_put(cmd | <span class="numeric">0x40</span>);
+<span class="line-id" style="display: none">19</span>
+<span class="line-id" style="display: none">20</span>    <span class="comment">// Отослать 32-х битную команду</span>
+<span class="line-id" style="display: none">21</span>    <span class="keyword">for</span> (i = <span class="numeric">24</span>; i &gt;= <span class="numeric">0</span>; i -= <span class="numeric">8</span>) SPI_put(arg &gt;&gt; i);
+<span class="line-id" style="display: none">22</span>
+<span class="line-id" style="display: none">23</span>    <span class="comment">// Отправка CRC</span>
+<span class="line-id" style="display: none">24</span>    <span class="keyword">if</span> (cmd == <span class="defs">SD_CMD0</span>) crc = <span class="numeric">0x95</span>;  <span class="comment">// CMD0 with arg 0</span>
+<span class="line-id" style="display: none">25</span>    <span class="keyword">if</span> (cmd == <span class="defs">SD_CMD8</span>) crc = <span class="numeric">0x87</span>;  <span class="comment">// CMD8 with arg 0x1AA</span>
+<span class="line-id" style="display: none">26</span>
+<span class="line-id" style="display: none">27</span>    SPI_put(crc);
+<span class="line-id" style="display: none">28</span>
+<span class="line-id" style="display: none">29</span>    <span class="comment">// Ожидать снятия флага BUSY</span>
+<span class="line-id" style="display: none">30</span>    <span class="keyword">for</span> (i = <span class="numeric">0</span>; ((status = SPI_get()) &amp; <span class="numeric">0x80</span>) &amp;&amp; i != <span class="numeric">0xFF</span>; i++);
+<span class="line-id" style="display: none">31</span>
+<span class="line-id" style="display: none">32</span>    <span class="keyword">return</span> status;
+<span class="line-id" style="display: none">33</span>}
+<span class="line-id" style="display: none">34</span>
+<span class="line-id" style="display: none">35</span><span class="comment">// Расширенная команда</span>
+<span class="line-id" style="display: none">36</span><span class="keyword">unsigned</span> <span class="keyword">char</span> SD_acmd(<span class="keyword">unsigned</span> <span class="keyword">char</span> cmd, <span class="keyword">unsigned</span> <span class="keyword">long</span> arg) {
+<span class="line-id" style="display: none">37</span>
+<span class="line-id" style="display: none">38</span>    SD_command(<span class="defs">SD_CMD55</span>, <span class="numeric">0</span>);
+<span class="line-id" style="display: none">39</span>    <span class="keyword">return</span> SD_command(cmd, arg);
+<span class="line-id" style="display: none">40</span>}</pre><div class="code-line-block"><a href="https://neurofox.ru/el/arduino_sd#" onclick="$(&quot;.line-id&quot;).toggle(); return false;">Номера</a></div><div class="ebr"></div>А теперь объяснения насчет всего этого кода сверху. Он, если разобраться, не сложный<br><div class="ebr"></div><ul><li> Сначала ставится CS=0 (LOW) Активация Чипа (и Дейла)</li><li> Далее принимаются байты, и принимаются до тех пор, пока а) не будет таймаут, что будет говорить о неготовности карты к близкому сотрудничеству, б) будет 0xFF на выходе - это говорит о готовности приема команд</li><li> Отсылается команда, как видно, команда может быть только от 0 до 63, потому что там старшие 2 бита это "01", такие дела.</li><li> Отсылается 4 байта (от старшего к младшего) от 32-х битного аргумента</li><li> Отсылается 1 байт CRC. Он для всех команд равен 0xFF но только для команды 0 и 8 он разный. Какой именно - смотри в коде.</li><li> Ну и собственно, ждем ответ, в котором старший бит будет равен 0. Может, кстати наступить таймаут (256 чтений ничего не дали - считай, закрывай гараж).</li></ul><div class="ebr"></div>Вот тут, собственно, и всё. С инициализацией карты покончено. Теперь самое важное - чтение с карты. Ну или запись, кому как удобнее. С записью я пока ничего не делал, влом, но там все очень просто, там так же, как на чтение, только наоборот.<br><div class="ebr"></div><h2 id="chtenie_bloka">§ <u>Чтение блока </u></h2><div class="ebr"></div>Вот он, код на чтение пока что:<br><div class="ebr"></div><pre class="code code-c"><span class="line-id" style="display: none">1</span><span class="comment">// Читать блок 512 байт в память</span>
+<span class="line-id" style="display: none">2</span><span class="keyword">char</span> SD_read(<span class="keyword">unsigned</span> <span class="keyword">long</span> lba) {
+<span class="line-id" style="display: none">3</span>
+<span class="line-id" style="display: none">4</span>    <span class="keyword">int</span> i = <span class="numeric">0</span>;
+<span class="line-id" style="display: none">5</span>    <span class="keyword">unsigned</span> <span class="keyword">char</span> status;
+<span class="line-id" style="display: none">6</span>
+<span class="line-id" style="display: none">7</span>    <span class="comment">// Кроме SDHC ничего не поддерживается</span>
+<span class="line-id" style="display: none">8</span>    <span class="keyword">if</span> (SD_type != <span class="defs">SD_CARD_TYPE_SDHC</span>)
+<span class="line-id" style="display: none">9</span>        <span class="keyword">return</span> SD_UnsupportYet;
+<span class="line-id" style="display: none">10</span>
+<span class="line-id" style="display: none">11</span>    <span class="comment">// Отослать команду поиска блока</span>
+<span class="line-id" style="display: none">12</span>    <span class="keyword">if</span> (SD_command(<span class="defs">SD_CMD17</span>, lba)) {
+<span class="line-id" style="display: none">13</span>        SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_BlockSearchError;
+<span class="line-id" style="display: none">14</span>    }
+<span class="line-id" style="display: none">15</span>
+<span class="line-id" style="display: none">16</span>    <span class="comment">// Ожидание ответа от SD</span>
+<span class="line-id" style="display: none">17</span>    <span class="keyword">while</span> ((status = SPI_get()) == <span class="numeric">0xFF</span>)
+<span class="line-id" style="display: none">18</span>        <span class="keyword">if</span> (i++ &gt; <span class="defs">SD_TIMEOUT_CNT</span>) {
+<span class="line-id" style="display: none">19</span>            SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_TimeoutError;
+<span class="line-id" style="display: none">20</span>        }
+<span class="line-id" style="display: none">21</span>
+<span class="line-id" style="display: none">22</span>    <span class="comment">// DATA_START_BLOCK = 0xFE</span>
+<span class="line-id" style="display: none">23</span>    <span class="keyword">if</span> (status != <span class="numeric">0xFE</span>) {
+<span class="line-id" style="display: none">24</span>        SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_BlockSearchError;
+<span class="line-id" style="display: none">25</span>    }
+<span class="line-id" style="display: none">26</span>
+<span class="line-id" style="display: none">27</span>    <span class="comment">// Прочесть данные</span>
+<span class="line-id" style="display: none">28</span>    <span class="keyword">for</span> (i = <span class="numeric">0</span>; i &lt; <span class="numeric">512</span>; i++) SD_data[i] = SPI_get();
+<span class="line-id" style="display: none">29</span>
+<span class="line-id" style="display: none">30</span>    SPI_ce(<span class="numeric">1</span>);
+<span class="line-id" style="display: none">31</span>    <span class="keyword">return</span> <span class="defs">SD_OK</span>;
+<span class="line-id" style="display: none">32</span>}</pre><div class="code-line-block"><a href="https://neurofox.ru/el/arduino_sd#" onclick="$(&quot;.line-id&quot;).toggle(); return false;">Номера</a></div><div class="ebr"></div>А теперь объяснения<br><div class="ebr"></div><ul><li> Отсылка CMD17 с аргументом номера сектора (начинается с 0)</li><li> Ожидание ответа от карты, который был бы равен 0xFE (или вылетает с дикой ошибкой таймаута). То есть пока 0xFF идет ответ, ждет, пока не появится заветный 0xFE</li><li> Производится чтение 512 байт в память</li></ul><div class="ebr"></div>Ну да, так просто. Ничего не скажешь. Но это вроде как работает нормально.<br><div class="ebr"></div><h2 id="zapis">§ <u>Запись </u></h2><div class="ebr"></div>Запись очень похоже на чтение, но нужно вот что сделать<br><div class="ebr"></div><ul><li> Сначала отослать команду CMD24 с аргументом номера блока (начиная с 0). Если команда возвращает отличный от 0 ответ, то ошибка!</li><li> Отослать байт 0xFE (токен DATA_START_BLOCK)</li><li> Отослать 512 байт данных</li><li> Выслать 2 байта 0xFF и 0xFF (это токены CRC)</li><li> Прочесть статус (1 байт) из SPI, и если (status &amp; 0x1F) != 0x05, то это фейл - данные не записались</li><li> Ждать ответа от карты (0xFF), или таймаута</li><li> Отослать команду CMD13 с аргументом 0.</li><li> Если ответ команды будет не 0, ошибка, завершить миссию</li><li> Прочесть байт SPI, если будет не 0, то ошибка</li><li> Установить CS=1</li></ul><div class="ebr"></div>Не очень жирный кот прилагается:<br><div class="ebr"></div><pre class="code code-c"><span class="line-id" style="display: none">1</span><span class="comment">// Писать блок 512 байт в память</span>
+<span class="line-id" style="display: none">2</span><span class="keyword">char</span> SD_write(<span class="keyword">unsigned</span> <span class="keyword">long</span> lba) {
+<span class="line-id" style="display: none">3</span>
+<span class="line-id" style="display: none">4</span>    <span class="keyword">int</span> i = <span class="numeric">0</span>;
+<span class="line-id" style="display: none">5</span>    <span class="keyword">unsigned</span> <span class="keyword">char</span> status;
+<span class="line-id" style="display: none">6</span>
+<span class="line-id" style="display: none">7</span>    <span class="comment">// Кроме SDHC ничего не поддерживается</span>
+<span class="line-id" style="display: none">8</span>    <span class="keyword">if</span> (SD_type != <span class="defs">SD_CARD_TYPE_SDHC</span>)
+<span class="line-id" style="display: none">9</span>        <span class="keyword">return</span> SD_UnsupportYet;
+<span class="line-id" style="display: none">10</span>
+<span class="line-id" style="display: none">11</span>    <span class="comment">// Отослать команду поиска блока</span>
+<span class="line-id" style="display: none">12</span>    <span class="keyword">if</span> (SD_command(<span class="defs">SD_CMD24</span>, lba)) {
+<span class="line-id" style="display: none">13</span>        SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_BlockSearchError;
+<span class="line-id" style="display: none">14</span>    }
+<span class="line-id" style="display: none">15</span>
+<span class="line-id" style="display: none">16</span>    <span class="comment">// DATA_START_BLOCK</span>
+<span class="line-id" style="display: none">17</span>    SPI_put(<span class="numeric">0xFE</span>);
+<span class="line-id" style="display: none">18</span>
+<span class="line-id" style="display: none">19</span>    <span class="comment">// Запись данных</span>
+<span class="line-id" style="display: none">20</span>    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="numeric">0</span>; i &lt; <span class="numeric">512</span>; i++) SPI_put(SD_data[i]);
+<span class="line-id" style="display: none">21</span>
+<span class="line-id" style="display: none">22</span>    <span class="comment">// Dummy 16-bit CRC</span>
+<span class="line-id" style="display: none">23</span>    SPI_put(<span class="numeric">0xFF</span>);
+<span class="line-id" style="display: none">24</span>    SPI_put(<span class="numeric">0xFF</span>);
+<span class="line-id" style="display: none">25</span>
+<span class="line-id" style="display: none">26</span>    status = SPI_get();
+<span class="line-id" style="display: none">27</span>
+<span class="line-id" style="display: none">28</span>    <span class="comment">// Сверить результат</span>
+<span class="line-id" style="display: none">29</span>    <span class="keyword">if</span> ((status &amp; <span class="numeric">0x1F</span>) != <span class="numeric">0x05</span>) {
+<span class="line-id" style="display: none">30</span>        SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_WriteError;
+<span class="line-id" style="display: none">31</span>    }
+<span class="line-id" style="display: none">32</span>
+<span class="line-id" style="display: none">33</span>    <span class="comment">// Ожидание окончания программирования</span>
+<span class="line-id" style="display: none">34</span>    <span class="keyword">while</span> ((status = SPI_get()) == <span class="numeric">0xFF</span>)
+<span class="line-id" style="display: none">35</span>        <span class="keyword">if</span> (i++ &gt; <span class="defs">SD_TIMEOUT_CNT</span>) {
+<span class="line-id" style="display: none">36</span>            SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_TimeoutError;
+<span class="line-id" style="display: none">37</span>        }
+<span class="line-id" style="display: none">38</span>
+<span class="line-id" style="display: none">39</span>    <span class="comment">// Проверить 2 байта на ненулевое значение</span>
+<span class="line-id" style="display: none">40</span>    <span class="keyword">if</span> (SD_command(<span class="defs">SD_CMD13</span>, <span class="numeric">0</span>) || SPI_get()) {
+<span class="line-id" style="display: none">41</span>        SPI_ce(<span class="numeric">1</span>); <span class="keyword">return</span> SD_WriteError;
+<span class="line-id" style="display: none">42</span>    }
+<span class="line-id" style="display: none">43</span>
+<span class="line-id" style="display: none">44</span>    SPI_ce(<span class="numeric">1</span>);
+<span class="line-id" style="display: none">45</span>    <span class="keyword">return</span> <span class="defs">SD_OK</span>;
+<span class="line-id" style="display: none">46</span>}</pre><div class="code-line-block"><a href="https://neurofox.ru/el/arduino_sd#" onclick="$(&quot;.line-id&quot;).toggle(); return false;">Номера</a></div><div class="ebr"></div><h2 id="zagolovochnyj_fajl">§ <u>Заголовочный файл </u></h2><div class="ebr"></div>Без этого файла не было бы малины никакой.<br><div class="ebr"></div><pre class="code code-c"><span class="line-id" style="display: none">1</span><span class="defines">#define</span> <span class="defs">SD_TIMEOUT_CNT</span>      <span class="numeric">4095</span>
+<span class="line-id" style="display: none">2</span>
+<span class="line-id" style="display: none">3</span><span class="keyword">enum</span> SD_errors {
+<span class="line-id" style="display: none">4</span>
+<span class="line-id" style="display: none">5</span>    <span class="defs">SD_OK</span>               = <span class="numeric">0</span>,
+<span class="line-id" style="display: none">6</span>    SD_UnknownError     = <span class="numeric">1</span>,
+<span class="line-id" style="display: none">7</span>    SD_TimeoutError     = <span class="numeric">2</span>,
+<span class="line-id" style="display: none">8</span>    SD_UnknownCard      = <span class="numeric">3</span>,
+<span class="line-id" style="display: none">9</span>    SD_AcmdError        = <span class="numeric">4</span>,
+<span class="line-id" style="display: none">10</span>    SD_Unknown58CMD     = <span class="numeric">5</span>,
+<span class="line-id" style="display: none">11</span>    SD_BlockSearchError = <span class="numeric">6</span>,
+<span class="line-id" style="display: none">12</span>    SD_UnsupportYet     = <span class="numeric">7</span>,
+<span class="line-id" style="display: none">13</span>    SD_WriteError       = <span class="numeric">8</span>
+<span class="line-id" style="display: none">14</span>};
+<span class="line-id" style="display: none">15</span>
+<span class="line-id" style="display: none">16</span><span class="keyword">enum</span> SD_types {
+<span class="line-id" style="display: none">17</span>
+<span class="line-id" style="display: none">18</span>    <span class="defs">SD_CARD_TYPE_ERR</span>    = <span class="numeric">0</span>,
+<span class="line-id" style="display: none">19</span>    <span class="defs">SD_CARD_TYPE_SD1</span>    = <span class="numeric">1</span>,
+<span class="line-id" style="display: none">20</span>    <span class="defs">SD_CARD_TYPE_SD2</span>    = <span class="numeric">2</span>,
+<span class="line-id" style="display: none">21</span>    <span class="defs">SD_CARD_TYPE_SDHC</span>   = <span class="numeric">3</span>
+<span class="line-id" style="display: none">22</span>
+<span class="line-id" style="display: none">23</span>};
+<span class="line-id" style="display: none">24</span>
+<span class="line-id" style="display: none">25</span><span class="keyword">enum</span> SD_results {
+<span class="line-id" style="display: none">26</span>
+<span class="line-id" style="display: none">27</span>    <span class="defs">R1_READY_STATE</span>      = <span class="numeric">0x00</span>,
+<span class="line-id" style="display: none">28</span>    <span class="defs">R1_IDLE_STATE</span>       = <span class="numeric">0x01</span>,
+<span class="line-id" style="display: none">29</span>    <span class="defs">R1_ILLEGAL_COMMAND</span>  = <span class="numeric">0x04</span>
+<span class="line-id" style="display: none">30</span>
+<span class="line-id" style="display: none">31</span>};
+<span class="line-id" style="display: none">32</span>
+<span class="line-id" style="display: none">33</span><span class="keyword">enum</span> SD_Commands {
+<span class="line-id" style="display: none">34</span>
+<span class="line-id" style="display: none">35</span>    <span class="defs">SD_CMD0</span>     = <span class="numeric">0</span>,    <span class="comment">// Сброс</span>
+<span class="line-id" style="display: none">36</span>    <span class="defs">SD_CMD8</span>     = <span class="numeric">8</span>,    <span class="comment">// Проверка вольтажа SD2</span>
+<span class="line-id" style="display: none">37</span>    <span class="defs">SD_CMD13</span>    = <span class="numeric">13</span>,   <span class="comment">// Проверка</span>
+<span class="line-id" style="display: none">38</span>    <span class="defs">SD_CMD17</span>    = <span class="numeric">17</span>,   <span class="comment">// Чтение</span>
+<span class="line-id" style="display: none">39</span>    <span class="defs">SD_CMD24</span>    = <span class="numeric">24</span>,   <span class="comment">// Запись</span>
+<span class="line-id" style="display: none">40</span>    <span class="defs">SD_CMD55</span>    = <span class="numeric">55</span>,   <span class="comment">// ACMD</span>
+<span class="line-id" style="display: none">41</span>    <span class="defs">SD_CMD58</span>    = <span class="numeric">58</span>    <span class="comment">// Чтение регистра OCR</span>
+<span class="line-id" style="display: none">42</span>};
+<span class="line-id" style="display: none">43</span>
+<span class="line-id" style="display: none">44</span><span class="comment">// Данные</span>
+<span class="line-id" style="display: none">45</span><span class="keyword">char</span>            SD_type;
+<span class="line-id" style="display: none">46</span><span class="keyword">char</span>            SD_error;
+<span class="line-id" style="display: none">47</span><span class="keyword">unsigned</span> <span class="keyword">char</span>   SD_data[<span class="numeric">512</span>];</pre><div class="code-line-block"><a href="https://neurofox.ru/el/arduino_sd#" onclick="$(&quot;.line-id&quot;).toggle(); return false;">Номера</a></div>                <div class="footer-page">
+
+                                            <div class="page-added-at">27 дек 2020, 17:40</div>
+                    
+                    <div class="copyrights">© 2011-2025 <span>Мурчат помощники и тупо листья бегут</span></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body></html>

@@ -1,0 +1,112 @@
+@media (max-width: 1024px) {
+    #content {
+        width: 1024px;
+    }
+}
+/* WindowsXP */
+@media (max-width: 960px) {
+    #content {
+        width: 940px;
+    }
+    #content .main-content {
+        font-family: Arial, serif;
+        font-size: 13px;
+    }
+    .main-content h2 {
+        font-size: 20px;
+    }
+    pre.white {
+        font-size: 13px;
+        font-family: monospace;
+        padding: 4px;
+    }
+    textarea.edit {
+        font-family: monospace;
+        font-size: 13px;
+        height: 210px;
+    }
+    code {
+        font-family: monospace, "courier new";
+        font-size: 12px;
+        letter-spacing: 0;
+    }
+    .index-block-top-3x .index-block {
+        width: 300px;
+    }
+    pre.code {
+        font-family: monospace;
+        font-size: 13px;
+    }
+    #content .windows-header .title {
+        font-weight: bold;
+    }
+    .blogo-wrapper {
+        margin: 0 0 0 250px;
+    }
+    .blogo-sidebar-right {
+        display: none;
+    }
+    .blogo-content textarea {
+        font-size: 14px;
+    }
+    .cal-one-item {
+        min-width: 200px;
+    }
+}
+/* Для мобильных */
+@media (max-width: 640px) {
+    #content {
+        max-width: 640px;
+    }
+    #content .main-content {
+        font-family: ArialRus, Arial, serif;
+        font-size: 14px;
+    }
+    .mobile-float-640 {
+        float: none;
+        width: auto;
+    }
+    .mobile-margin-640,
+    .blogo-wrapper {
+        margin: 0;
+    }
+    .blogo-sidebar {
+        float: none;
+    }
+    .tab-top .tab .rt {
+        font-size: 12px;
+        padding: 4px 6px 0 6px;
+        height: 24px;
+    }
+    .one-block {
+        width: 100%;
+    }
+    .one-block .icon-item {
+        display: none;
+    }
+    .one-block .desc-item {
+        display: block;
+        height: auto;
+        font-size: 16px;
+    }
+    .windows-lightbox-lf,
+    .windows-lightbox a,
+    #content .windows-header .title {
+        font-size: 16px;
+    }
+    .copyrights,
+    .page-added-at {
+        font-size: 12px;
+    }
+    input {
+        font-size: 14px;
+    }
+    .breadcrumby {
+        font-size: 14px;
+    }
+}
+@media (max-width: 360px) {
+    #content {
+        max-width: 360px;
+    }
+}

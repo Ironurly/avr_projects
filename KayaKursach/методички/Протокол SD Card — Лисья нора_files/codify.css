@@ -1,0 +1,198 @@
+/* Таблицы с кодами */
+.z80-instructions {
+    padding: 4px;
+    margin: 0;
+    border-collapse: collapse;
+}
+.z80-instructions td,
+.z80-instructions th {
+    border: 1px solid #ccc;
+    font-family: "UbuntuMono", Arial;
+    line-height: 1.1em;
+    font-size: 19px;
+}
+.z80-instructions th {
+    background: #aee;
+}
+.z80-instructions th.head {
+    width: 16px;
+}
+.z80-instructions td {
+    width: 100px;
+    background: #ffd;
+}
+.z80-instructions td u {
+    font-weight: bold;
+}
+.z80-instructions td span {
+    float: right;
+    font-size: 18px;
+    color: #888;
+}
+.code-line-block {
+    font-size: 15px;
+    float: right;
+    margin-left: 18px;
+}
+/* --------------------------- Исходные коды -------------------------------- */
+pre {
+    margin: 0 -6px 0 -6px;
+    background: #f0f0f0;
+    border-left: 4px solid #0c0;
+    font-size: 24px;
+    font-family: UbuntuMono, monospace;
+    line-height: 1.3em;
+    tab-size: 4; /* Firefox */
+    -moz-tab-size: 4; /* Firefox */
+    overflow: auto;
+    padding: 0 0 0 4px;
+}
+pre.code {
+    padding: 4px;
+    line-height: 1.2em;
+    letter-spacing: -1px;
+    background: #f2f2f2;
+    color: #444;
+    border-left: 0 solid #f69b4d;
+    border-top: 1px dashed #888;
+    border-bottom: 1px dashed #888;
+}
+pre.white {
+    background: none;
+    border: none;
+    margin: 8px 0;
+    line-height: 1.1em;
+    letter-spacing: -1px;
+    font-size: 22px;
+}
+pre .line-id {
+    background: #1d799c;
+    color: #000;
+    width: 32px;
+    text-align: right;
+    padding-right: 4px;
+    margin-right: 4px;
+    display: inline-block;
+    margin-left: -4px;
+}
+
+/* COMMON */
+pre.code .keyword { font-weight: bold; color: #008; }
+pre.code .comment { color: #959595; }
+pre.code .string  { color: #008000; }
+pre.code .numeric { color: #aa0000; }
+pre.code .label   { color: #808; }
+pre.code .upper   { font-weight: bold; }
+
+/* BAT */
+pre.code-bat            { color: #0c0; background: #000; }
+pre.code-bat .label     { color: #fff; font-weight: bold; }
+pre.code-bat .keyword   { color: #0f0; }
+
+/* C */
+pre.code-c              { background: #004; color: #fff; }
+pre.code-c .defines     { font-weight: bold; color: #d4fd37; }
+pre.code-c .keyword     { font-weight: bold; color: #5dc453; }
+pre.code-c .comment     { color: #aaa; }
+pre.code-c .string      { color: #1fd4d4; }
+pre.code-c .numeric     { color: #ffb900; }
+pre.code-c .upper       { font-weight: bold; }
+
+/* BASIC */
+pre.code-bas {
+    line-height: 1.0em;
+    background: #026;
+    color: #ccc;
+}
+pre.code-bas .str       { color: #0f0; background: #000; }
+pre.code-bas .comment   { color: #999; }
+pre.code-bas .comment   { color: #999; }
+pre.code-bas .keyword   { color: #fff; font-weight: bold; }
+pre.code-bas .numeric   { color: #8ff; }
+pre.code-bas .var       { color: #caff62; font-weight: bold; }
+
+/* PHP */
+pre.code-php {
+    line-height: 1.2em;
+    background: #000;
+    color: #ddd;
+    border-left: 4px solid #0af;
+}
+pre.code-php .comment { color: #888; }
+pre.code-php .bash { background: #445a5a; }
+pre.code-php .str { color: #0e0; }
+pre.code-php .keyword { color: #46b9c4; font-weight: bold; }
+pre.code-php .var { color: #ff0; }
+pre.code-php .const { color: #9bc4b3; font-weight: bold;  }
+
+/* JS */
+pre.code-js { background: #004; color: #ccc; }
+pre.code-js .hex { color: #ff0; }
+pre.code-js .quote { color: #0f0; }
+pre.code-js .keyword { color: #fff; font-weight: bold; }
+
+/* Z80 */
+pre.code-z80            { background: #000; color: #eee; }
+pre.code-z80 .label     { color: #82c6dd; }
+pre.code-z80 .keyword   { color: #4f4; }
+pre.code-z80 .reg       { font-weight: bold; color: #ff0; }
+
+/* C/C++ */
+pre.code-c .defs { font-weight: bold; }
+
+/* ASM */
+pre.code-asm            { background: #1c2551; color: #ccc;  }
+pre.code-asm .comment   { color: #888; }
+pre.code-asm .define    { color: #8ecdb7; font-weight: bold;  }
+pre.code-asm .label     { color: #ffde6d; }
+pre.code-asm .str       { color: #0c0; }
+pre.code-asm .macro     { color: #31a183; font-weight: bold; }
+pre.code-asm .keyword   { color: #fff; }
+pre.code-asm .digit     { color: #0cc; }
+pre.code-asm.lowercase  { text-transform: none; }
+
+/* VERILOG */
+pre.code-verilog,           pre.code-v { background: #004; color: #ccc; }
+pre.code-verilog .comment,  pre.code-v .comment { color: #0f7967; }
+pre.code-verilog .keyword,  pre.code-v .keyword { color: #a6e386; }
+pre.code-verilog .numeric,  pre.code-v .numeric { color: #55c7e6; }
+pre.code-verilog .upper,    pre.code-v .upper { color: #fff; }
+
+/* CODEBLOCK */
+.codeblock              { font-size: 22px; }
+.codeblock .comment     { color: #888; }
+.codeblock .defines     { color: #b88; font-weight: bold; }
+.codeblock .keyword     { color: #44C; font-weight: bold; }
+.codeblock .str         { color: #066; }
+.codeblock .var         { color: #837; }
+.codeblock .numeric     { color: #600; }
+.codeblock .macro       { color: #ab5313; font-weight: bold; }
+.codeblock .define      { color: #088; font-weight: bold; }
+.codeblock .label       { color: #808; }
+.codeblock .string      { color: #060; }
+.codeblock .italic      { color: #888; font-style: italic; }
+.codeblock .const       { color: #66b; }
+.codeblock-bas          { text-transform: uppercase; }
+.codeblock-z80          { text-transform: uppercase; }
+pre.codeblock           { border-left: 5px dashed #ccc; background: #fbfbff; padding: 8px; }
+pre.codeblock-bas       { border-left: 5px dashed #c8d4ff; background: url(/i/watermark/bas.png) center center; }
+pre.codeblock-v         { background: url(/i/watermark/v.png) center center; }
+pre.codeblock-php       { background: url(/i/watermark/php.png) center center; }
+
+/* Оформление блоков кода, добавление вкладок */
+.codeblock .select-sub {
+    margin: 0 0 8px -4px;
+    border-bottom: 1px solid #ccc;
+}
+.codeblock .select-tab {
+    padding: 2px 8px;
+    text-decoration: none;
+    color: #444;
+}
+a.codeblock-active-tab {
+    background: #ccc;
+    color: #888;
+}
+.codeblock-active-tab:hover {
+    color: #448;
+}

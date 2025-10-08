@@ -1,0 +1,8 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "pff.h": "c",
+        "diskio.h": "c",
+        "string.h": "c"
+    }
+}
