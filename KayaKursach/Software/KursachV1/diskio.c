@@ -9,12 +9,6 @@
 #include <util/delay.h>
 #include <string.h>
 
-/* Definitions for SD card */
-#define MISO_PIN   4 // PB4
-#define MOSI_PIN   3 // PB3  
-#define SCK_PIN    5 // PB5
-#define CS_PIN     2 // PB2
-
 #define DEV_MMC		0	/* Map SD card to physical drive 0 */
 #define SD_TIMEOUT_CNT      4095
 

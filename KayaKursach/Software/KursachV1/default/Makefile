@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = KursachV1.o diskio.o ff.o 
+OBJECTS = KursachV1.o diskio.o ff.o log.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -53,6 +53,9 @@ diskio.o: ../diskio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ff.o: ../ff.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
+
+log.o: ../log.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link

@@ -5,50 +5,45 @@
 #include <string.h>
 #include "ff.h"
 #include "diskio.h"
+#include "log.h"
 
-#define LED_Err    5 // PD5
-#define LED_OK     6 // PD6
-#define LED_Stat   7 // PD7
+int sd_append( const char * filename, const char * text )
+{
+    disk_initialize(0);
+    FATFS fs;
+    f_mount(&fs, "", 1);
 
-void init_leds(void) {
-    DDRD |= (1 << LED_Stat) | (1 << LED_Err) | (1 << LED_OK);
-    PORTD &= ~((1 << LED_Stat) | (1 << LED_Err) | (1 << LED_OK));
-}
-void blink(int type, int amount){
-    switch (type)
+    FIL file;
+    FRESULT res;
+    UINT bytes_written;
+    
+    // Открываем файл для дозаписи (создаем если не существует)
+    res = f_open( & file, filename, FA_WRITE | FA_OPEN_APPEND );
+    if ( res != FR_OK ) 
     {
-    case 0:
-        for (int i = 0; i < amount; i++){
-            PORTD |= (1 << LED_OK);
-            _delay_ms(1000);
-            PORTD &= ~(1 << LED_OK);
-            _delay_ms(1000);
-        }
-        break;
-    case 1:
-        for (int i = 0; i < amount; i++){
-            PORTD |= (1 << LED_Stat);
-            _delay_ms(200);
-            PORTD &= ~(1 << LED_Stat);
-            _delay_ms(200);
-            
-        }
-        break;
-    case 2:
-        for (int i = 0; i < amount; i++){
-            PORTD |= (1 << LED_Err);
-            _delay_ms(500);
-            PORTD &= ~(1 << LED_Err);
-            _delay_ms(500);
-            
-        }
-        break;
-    default:
-        break;
+        blink(2, 1);
     }
+    
+    // Перемещаем указатель в конец файла (на всякий случай)
+    f_lseek( & file, f_size( & file ) );
+    
+    // Записываем данные
+    res = f_write( & file, text, strlen( text ), & bytes_written );
+    if ( res != FR_OK || bytes_written != strlen(text) )
+    {
+        f_close( & file );
+        blink(2, 2);
+    }
+    
+    // Закрываем файл
+    f_close( &file );
+
+    f_mount(0, "", 0);
+
+    return 0;  // Успех
 }
 
-int write_to_file( const char * file_name, const char * text_input )
+int sd_write( const char * file_name, const char * text_input )
 {
     disk_initialize(0);
 
@@ -84,7 +79,7 @@ int write_to_file( const char * file_name, const char * text_input )
 }
 
 // Функция для чтения строки из файла
-int read_string_from_file(const char *filename, char *result, int result_size) {
+int sd_read(const char *filename, char *result, int result_size) {
     
     disk_initialize(0);
 
@@ -121,32 +116,31 @@ int read_string_from_file(const char *filename, char *result, int result_size) {
 
 int main(void) {
     init_leds();
-    _delay_ms(2000);
-
-    const char* text = "10\n";
-    char result[32];  // Используем массив вместо динамического выделения
-    int error_code;
+    
+    const char* text = "5\n";
+    //char result[32];  // Используем массив вместо динамического выделения
+    //int error_code;
     
     // Открываем/создаем файл
     blink(1, 1);  // Файл открыт
-    write_to_file("test1.txt", text);
-    blink(1, 3);  // Файл открыт
+    sd_append("test1.txt", text);
+    blink(1, 2);  // Файл открыт
     
     // Читаем из файла
-    error_code = read_string_from_file("test1.txt", result, sizeof(result));
+    // error_code = read_string_from_file("test1.txt", result, sizeof(result));
     
-    if (error_code == 0) {
-        // Преобразуем строку в число
-        int amount = atoi(result);
-        blink(2, amount);
-    } else {
-        // Обработка ошибки
-        blink(2, error_code);  // Мигаем кодом ошибки
-    }
+    // if (error_code == 0) {
+    //     // Преобразуем строку в число
+    //     int amount = atoi(result);
+    //     blink(2, amount);
+    // } else {
+    //     // Обработка ошибки
+    //     blink(2, error_code);  // Мигаем кодом ошибки
+    // }
     
     // Успех - бесконечное быстрое мигание
     while(1) {
-        blink(0, 1);
+        blink(0, 3);
     }
     
     return 0;

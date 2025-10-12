@@ -5,6 +5,7 @@
         "diskio.h": "c",
         "string.h": "c",
         "ff.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "config.h": "c"
     }
 }
