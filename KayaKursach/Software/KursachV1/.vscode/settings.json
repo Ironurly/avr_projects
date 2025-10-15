@@ -6,6 +6,8 @@
         "string.h": "c",
         "ff.h": "c",
         "stdlib.h": "c",
-        "config.h": "c"
+        "config.h": "c",
+        "stdio.h": "c",
+        "i2c_config.h": "c"
     }
 }

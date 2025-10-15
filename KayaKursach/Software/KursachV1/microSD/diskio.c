@@ -4,7 +4,7 @@
 
 #include "ff.h"			/* Basic definitions of FatFs */
 #include "diskio.h"		/* Declarations FatFs API */
-#include "config.h"
+#include "../config.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>
