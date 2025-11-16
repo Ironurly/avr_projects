@@ -46,119 +46,116 @@ int sd_append( const char * filename, const char * text )
     return 0;  // Успех
 }
 
-int sd_write( const char * file_name, const char * text_input )
-{
+// Функция для чтения конкретной строки из файла
+int sd_read_line(const char *filename, char *result, int result_size, int line_number) {
     disk_initialize(0);
-
-    FATFS fs;
-    f_mount(&fs, "", 1);
-
-    FIL fil;
-    UINT bw;
-
-    FRESULT res = f_open(&fil, file_name, FA_WRITE | FA_CREATE_ALWAYS);
-    
-    if (res != FR_OK) 
-    {
-        f_mount(0, "", 0);
-        return 1;
-    }
-
-    res = f_write(&fil, text_input, strlen(text_input), &bw);
-    if (res != FR_OK || bw != strlen(text_input)) 
-    {
-        f_close(&fil);
-        f_mount(0, "", 0);
-        return 2;
-    }
-    
-    // Закрываем файл
-    f_close(&fil);
-    
-    // Размонтируем файловую систему
-    f_mount(0, "", 0);
-
-    return 0;
-}
-
-// Функция для чтения строки из файла
-int sd_read(const char *filename, char *result, int result_size) {
-    
-    disk_initialize(0);
-
     FATFS fs;
     f_mount(&fs, "", 1);
 
     FIL file;
     FRESULT res;
     UINT bytes_read;
+    int current_line = 0;
+    int index = 0;
+    char ch;
     
+    // Открываем файл для чтения
     res = f_open(&file, filename, FA_READ);
     if (res != FR_OK) {
         f_mount(0, "", 0);
-        return 1;
+        return 1;  // Ошибка открытия файла
     }
     
-    res = f_read(&file, result, result_size - 1, &bytes_read);
-    if (res != FR_OK) {
-        f_close(&file);
-        f_mount(0, "", 0);
-        return 2;
+    // Ищем нужную строку
+    while (current_line < line_number) {
+        res = f_read(&file, &ch, 1, &bytes_read);
+        if (res != FR_OK || bytes_read == 0) {
+            f_close(&file);
+            f_mount(0, "", 0);
+            return 2;  // Файл закончился до достижения нужной строки
+        }
+        
+        if (ch == '\n') {
+            current_line++;
+        }
     }
+    
+    // Читаем строку до конца строки или предела буфера
+    while (index < result_size - 1) {
+        res = f_read(&file, &ch, 1, &bytes_read);
+        if (res != FR_OK || bytes_read == 0) {
+            break;  // Конец файла
+        }
+        
+        if (ch == '\n' || ch == '\r') {
+            break;  // Конец строки
+        }
+        
+        result[index++] = ch;
+    }
+    
+    // Завершаем строку
+    result[index] = '\0';
     
     f_close(&file);
-    
-    result[bytes_read] = '\0';
     f_mount(0, "", 0);
-    return 0;
+    return 0;  // Успех
 }
-/*
-int main(void) {
-    init_leds();  
-    const char* text = "5\n";
-    blink(1, 1);  // Файл открыт
-    sd_append("test1.txt", text);
-    blink(1, 2);  // Файл открыт   
-    // Успех - бесконечное быстрое мигание
-    while(1) {
-        blink(0, 3);
-    }  
-    return 0;
-}
-*/
-void display () {// перенести весь мусор с main можно реализовать buffer для текста
+
+void display ( char * string ) 
+{
+    ssd1306_set_cursor(2, 10);
+    ssd1306_print_string(string);
     return;
-};
-int main(void) {
-    _delay_ms(500);
+}
+
+void init()
+{
+    _delay_ms(100);
+    init_leds();
+    _delay_ms(20);
     i2c_init();
-    _delay_ms(100);
+    _delay_ms(20);
     ssd1306_init();
-    _delay_ms(100);
-    
-    // Сначала заполним экран "мусором" для теста
-    for (uint8_t page = 0; page < 8; page++) {
-        ssd1306_set_cursor(page, 0);
-        i2c_start(SSD1306_ADDRESS);
-        i2c_write(0x40);
-        for (uint8_t col = 0; col < 128; col++) {
-            i2c_write(0xAA); // Паттерн 10101010
-        }
-        i2c_stop();
-    }
-    _delay_ms(2000);
-    
-    // Теперь очищаем
+    _delay_ms(20);
     ssd1306_clear();
-    _delay_ms(1000);
-    
-    // Пишем текст на ВСЕХ страницах
-    ssd1306_set_cursor(0, 0);
-    ssd1306_test_chars();
-    
-    while(1) {
-        _delay_ms(1000);
+    _delay_ms(20);
+    return;
+}
+
+void exit_all()
+{
+    _delay_ms(20);
+    while(1) 
+    {
+        blink(0, 3);
     }
+    return;
+}
+
+int main(void)
+{
+    init();
+    //     sd_append("test1.txt", text);
+    int line = 0; // Потом доработать с кнопками аля +1 -1;
+    char result[64]; // 64 от головы взял
+    char * filename = "test1.txt"; // если rtc то потом надо головой думать
     
+    blink(1, 1);
+    while (sd_read_line(filename, result, 64, line) == 0)
+    {
+        if (result[0] =='\0')
+            break;
+        
+        ssd1306_clear();
+        display(result);
+        _delay_ms(1000);
+        line++;
+    }
+    //int res = sd_read_line(filename, result, 64, 0);
+
+    blink(1, 2);
+
+    exit_all();
     return 0;
 }
