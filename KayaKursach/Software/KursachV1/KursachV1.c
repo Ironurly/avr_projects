@@ -3,13 +3,14 @@
 #include <util/delay.h>
 #include <stdlib.h>
 #include <string.h>
-#include "microSD/ff.h"
-#include "microSD/diskio.h"
+// #include "microSD/ff.h"
+// #include "microSD/diskio.h"
 #include "log.h"
 #include <stdio.h>
 #include "display/i2c_config.h"
 #include "display/ssd1306.h"
-
+#include "GSM/sms_reader.h"
+/*
 int sd_append( const char * filename, const char * text )
 {
     disk_initialize(0);
@@ -101,9 +102,11 @@ int sd_read_line(const char *filename, char *result, int result_size, int line_n
     f_mount(0, "", 0);
     return 0;  // Успех
 }
-
+*/
 void display ( char * string ) 
 {
+    ssd1306_clear();
+    _delay_ms(20);
     ssd1306_set_cursor(2, 10);
     ssd1306_print_string(string);
     return;
@@ -114,12 +117,13 @@ void init()
     _delay_ms(100);
     init_leds();
     _delay_ms(20);
-    i2c_init();
+    //i2c_init();
     _delay_ms(20);
     ssd1306_init();
     _delay_ms(20);
     ssd1306_clear();
     _delay_ms(20);
+    SIM800_Init();
     return;
 }
 
@@ -137,25 +141,35 @@ int main(void)
 {
     init();
     //     sd_append("test1.txt", text);
-    int line = 0; // Потом доработать с кнопками аля +1 -1;
-    char result[64]; // 64 от головы взял
-    char * filename = "test1.txt"; // если rtc то потом надо головой думать
+    char received_command[50];
+    // int line = 0; // Потом доработать с кнопками аля +1 -1;
+    // char result[64]; // 64 от головы взял
+    // char * filename = "test1.txt"; // если rtc то потом надо головой думать
     
-    blink(1, 1);
-    while (sd_read_line(filename, result, 64, line) == 0)
-    {
-        if (result[0] =='\0')
-            break;
+    blink(0, 1);
+    // while (sd_read_line(filename, result, 64, line) == 0)
+    // {
+    //     if (result[0] =='\0')
+    //         break;
         
-        ssd1306_clear();
-        display(result);
-        _delay_ms(1000);
-        line++;
+    //     ssd1306_clear();
+    //     display(result);
+    //     _delay_ms(1000);
+    //     line++;
+    // }
+    // //int res = sd_read_line(filename, result, 64, 0);
+
+    // blink(1, 2);
+
+    while(1)
+    {
+        if (SIM800_ReadCommandMessage(received_command))
+        {
+            blink(1, 3);
+            display(received_command);
+        }
+        _delay_ms(5000);
+        blink(0, 3);
     }
-    //int res = sd_read_line(filename, result, 64, 0);
-
-    blink(1, 2);
-
-    exit_all();
     return 0;
 }

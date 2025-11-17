@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = KursachV1.o log.o i2c_config.o ssd1306.o diskio.o ff.o 
+OBJECTS = KursachV1.o log.o i2c_config.o ssd1306.o sms_reader.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -58,10 +58,7 @@ i2c_config.o: ../display/i2c_config.c
 ssd1306.o: ../display/ssd1306.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-diskio.o: ../microSD/diskio.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
-
-ff.o: ../microSD/ff.c
+sms_reader.o: ../GSM/sms_reader.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link
