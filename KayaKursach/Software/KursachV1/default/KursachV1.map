@@ -1,13 +1,23 @@
 Archive member included because of file (symbol)
 
+c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_mulsi3.o)
+                              ff.o (__mulsi3)
+c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_udivmodsi4.o)
+                              ff.o (__udivmodsi4)
 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
                               c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o (exit)
 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
-                              ssd1306.o (__do_copy_data)
+                              KursachV1.o (__do_copy_data)
 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
-                              sms_reader.o (__do_clear_bss)
+                              reading.o (__do_clear_bss)
+c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcmp.o)
+                              ff.o (memcmp)
+c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcpy.o)
+                              ff.o (memcpy)
+c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memset.o)
+                              ff.o (memset)
 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
-                              sms_reader.o (strchr)
+                              ff.o (strchr)
 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
                               sms_reader.o (strncpy)
 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
@@ -17,6 +27,7 @@ Allocating common symbols
 Common symbol       size              file
 
 uart_buffer         0xa0              sms_reader.o
+SD_data             0x200             diskio.o
 
 Memory Configuration
 
@@ -34,9 +45,11 @@ Linker script and memory map
 Address of section .data set to 0x800100
 LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
 LOAD KursachV1.o
-LOAD log.o
 LOAD i2c_config.o
 LOAD ssd1306.o
+LOAD reading.o
+LOAD ff.o
+LOAD diskio.o
 LOAD sms_reader.o
 LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a
 LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a
@@ -132,7 +145,7 @@ LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0xb34
+.text           0x00000000     0x47d4
  *(.vectors)
  .vectors       0x00000000       0x68 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
                 0x00000000                __vector_default
@@ -140,43 +153,42 @@ LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5
  *(.vectors)
  *(.progmem.gcc*)
  *(.progmem*)
- .progmem.data  0x00000068      0x159 ssd1306.o
+ .progmem.data  0x00000068      0x15e ssd1306.o
                 0x00000068                font_5x8
-                0x000001c2                . = ALIGN (0x2)
- *fill*         0x000001c1        0x1 00
-                0x000001c2                __trampolines_start = .
+                0x000001c6                . = ALIGN (0x2)
+                0x000001c6                __trampolines_start = .
  *(.trampolines)
- .trampolines   0x000001c2        0x0 linker stubs
+ .trampolines   0x000001c6        0x0 linker stubs
  *(.trampolines*)
-                0x000001c2                __trampolines_end = .
+                0x000001c6                __trampolines_end = .
  *(.jumptables)
  *(.jumptables*)
  *(.lowtext)
  *(.lowtext*)
-                0x000001c2                __ctors_start = .
+                0x000001c6                __ctors_start = .
  *(.ctors)
-                0x000001c2                __ctors_end = .
-                0x000001c2                __dtors_start = .
+                0x000001c6                __ctors_end = .
+                0x000001c6                __dtors_start = .
  *(.dtors)
-                0x000001c2                __dtors_end = .
+                0x000001c6                __dtors_end = .
  SORT(*)(.ctors)
  SORT(*)(.dtors)
  *(.init0)
- .init0         0x000001c2        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
-                0x000001c2                __init
+ .init0         0x000001c6        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
+                0x000001c6                __init
  *(.init0)
  *(.init1)
  *(.init1)
  *(.init2)
- .init2         0x000001c2        0xc c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
+ .init2         0x000001c6        0xc c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
  *(.init2)
  *(.init3)
  *(.init3)
  *(.init4)
- .init4         0x000001ce       0x16 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
-                0x000001ce                __do_copy_data
- .init4         0x000001e4       0x10 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
-                0x000001e4                __do_clear_bss
+ .init4         0x000001d2       0x16 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
+                0x000001d2                __do_copy_data
+ .init4         0x000001e8       0x10 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
+                0x000001e8                __do_clear_bss
  *(.init4)
  *(.init5)
  *(.init5)
@@ -187,88 +199,136 @@ LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x000001f4        0x8 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
+ .init9         0x000001f8        0x8 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
  *(.init9)
  *(.text)
- .text          0x000001fc        0x4 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
-                0x000001fc                __vector_22
-                0x000001fc                __vector_1
-                0x000001fc                __vector_24
-                0x000001fc                __vector_12
-                0x000001fc                __bad_interrupt
-                0x000001fc                __vector_6
-                0x000001fc                __vector_3
-                0x000001fc                __vector_23
-                0x000001fc                __vector_25
-                0x000001fc                __vector_11
-                0x000001fc                __vector_13
-                0x000001fc                __vector_17
-                0x000001fc                __vector_19
-                0x000001fc                __vector_7
-                0x000001fc                __vector_5
-                0x000001fc                __vector_4
-                0x000001fc                __vector_9
-                0x000001fc                __vector_2
-                0x000001fc                __vector_21
-                0x000001fc                __vector_15
-                0x000001fc                __vector_8
-                0x000001fc                __vector_14
-                0x000001fc                __vector_10
-                0x000001fc                __vector_16
-                0x000001fc                __vector_18
-                0x000001fc                __vector_20
- .text          0x00000200      0x126 KursachV1.o
-                0x00000200                display
-                0x00000230                init
-                0x0000029c                exit_all
-                0x000002bc                main
- .text          0x00000326       0xda log.o
-                0x00000326                init_leds
-                0x00000334                blink
- .text          0x00000400       0x82 i2c_config.o
-                0x00000400                i2c_init
-                0x00000412                i2c_start
-                0x00000450                i2c_stop
-                0x00000460                i2c_write
- .text          0x00000482      0x392 ssd1306.o
-                0x00000482                ssd1306_cmd
-                0x000004a0                ssd1306_init
-                0x00000580                ssd1306_set_cursor
-                0x000005ae                ssd1306_clear
-                0x000005ee                ssd1306_print_char
-                0x000007a6                ssd1306_print_string
-                0x000007ce                ssd1306_test_chars
- .text          0x00000814      0x2b4 sms_reader.o
-                0x00000856                simDisplay
-                0x000008aa                UART_SendString
-                0x000008c6                UART_Receive
-                0x000008dc                SIM800_Init
-                0x00000988                SIM800_ReadCommandMessage
- .text          0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
- .text          0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
- .text          0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
- .text          0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
- .text          0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
- .text          0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
-                0x00000ac8                . = ALIGN (0x2)
+ .text          0x00000200        0x4 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
+                0x00000200                __vector_22
+                0x00000200                __vector_1
+                0x00000200                __vector_24
+                0x00000200                __vector_12
+                0x00000200                __bad_interrupt
+                0x00000200                __vector_6
+                0x00000200                __vector_3
+                0x00000200                __vector_23
+                0x00000200                __vector_25
+                0x00000200                __vector_11
+                0x00000200                __vector_13
+                0x00000200                __vector_17
+                0x00000200                __vector_19
+                0x00000200                __vector_7
+                0x00000200                __vector_5
+                0x00000200                __vector_4
+                0x00000200                __vector_9
+                0x00000200                __vector_2
+                0x00000200                __vector_21
+                0x00000200                __vector_15
+                0x00000200                __vector_8
+                0x00000200                __vector_14
+                0x00000200                __vector_10
+                0x00000200                __vector_16
+                0x00000200                __vector_18
+                0x00000200                __vector_20
+ .text          0x00000204      0x382 KursachV1.o
+                0x00000204                display
+                0x00000234                sd_append
+                0x0000030c                sd_read_line
+                0x000004d0                init
+                0x0000053c                main
+ .text          0x00000586       0x82 i2c_config.o
+                0x00000586                i2c_init
+                0x00000598                i2c_start
+                0x000005d6                i2c_stop
+                0x000005e6                i2c_write
+ .text          0x00000608      0x392 ssd1306.o
+                0x00000608                ssd1306_cmd
+                0x00000626                ssd1306_init
+                0x00000706                ssd1306_set_cursor
+                0x00000734                ssd1306_clear
+                0x00000774                ssd1306_print_char
+                0x0000092c                ssd1306_print_string
+                0x00000954                ssd1306_test_chars
+ .text          0x0000099a       0x56 reading.o
+                0x0000099a                init_buttons
+                0x000009a8                handle_buttons
+ .text          0x000009f0     0x355a ff.o
+                0x0000233a                f_mount
+                0x000023cc                f_open
+                0x00002774                f_read
+                0x00002a90                f_write
+                0x00002e86                f_sync
+                0x00002f8a                f_close
+                0x00002fc6                f_lseek
+                0x0000339a                f_opendir
+                0x0000344e                f_closedir
+                0x00003480                f_stat
+                0x000035aa                f_getfree
+                0x000037ac                f_truncate
+                0x00003924                f_unlink
+                0x00003af6                f_mkdir
+                0x00003cf4                f_rename
+ .text          0x00003f4a      0x48e diskio.o
+                0x00003f4a                SPI_init
+                0x00003f58                SPI_put
+                0x00003f64                SD_command
+                0x00003ffc                SD_acmd
+                0x0000402e                SD_read
+                0x00004098                SD_write
+                0x00004134                disk_status
+                0x00004140                disk_initialize
+                0x0000426e                disk_read
+                0x000042fa                disk_write
+                0x00004386                disk_ioctl
+                0x000043ce                get_fattime
+ .text          0x000043d8      0x2d4 sms_reader.o
+                0x0000441a                simDisplay
+                0x0000446e                UART_SendString
+                0x0000448a                UART_Receive
+                0x000044c0                SIM800_Init
+                0x0000456c                SIM800_ReadCommandMessage
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_mulsi3.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_udivmodsi4.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcmp.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcpy.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memset.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
+ .text          0x000046ac        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
+                0x000046ac                . = ALIGN (0x2)
  *(.text.*)
- .text.libgcc   0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
- .text.libgcc   0x00000ac8        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x000046ac       0x3e c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_mulsi3.o)
+                0x000046ac                __mulsi3
+ .text.libgcc   0x000046ea       0x44 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_udivmodsi4.o)
+                0x000046ea                __udivmodsi4
+ .text.libgcc   0x0000472e        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x0000472e        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
+ .text.libgcc   0x0000472e        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
  .text.avr-libc
-                0x00000ac8       0x16 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
-                0x00000ac8                strchr
+                0x0000472e       0x1a c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcmp.o)
+                0x0000472e                memcmp
  .text.avr-libc
-                0x00000ade       0x1e c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
-                0x00000ade                strncpy
+                0x00004748       0x12 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcpy.o)
+                0x00004748                memcpy
  .text.avr-libc
-                0x00000afc       0x34 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
-                0x00000afc                strstr
-                0x00000b30                . = ALIGN (0x2)
+                0x0000475a        0xe c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memset.o)
+                0x0000475a                memset
+ .text.avr-libc
+                0x00004768       0x16 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
+                0x00004768                strchr
+ .text.avr-libc
+                0x0000477e       0x1e c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
+                0x0000477e                strncpy
+ .text.avr-libc
+                0x0000479c       0x34 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
+                0x0000479c                strstr
+                0x000047d0                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000b30        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
-                0x00000b30                _exit
-                0x00000b30                exit
+ .fini9         0x000047d0        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
+                0x000047d0                _exit
+                0x000047d0                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -287,62 +347,79 @@ LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000b30        0x4 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
+ .fini0         0x000047d0        0x4 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000b34                _etext = .
+                0x000047d4                _etext = .
 
-.data           0x00800100       0xbc load address 0x00000b34
+.data           0x00800100      0x110 load address 0x000047d4
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
- .data          0x00800100        0x0 KursachV1.o
- .data          0x00800100        0x0 log.o
- .data          0x00800100        0x0 i2c_config.o
- .data          0x00800100       0x2f ssd1306.o
- .data          0x0080012f       0x8d sms_reader.o
- .data          0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
- .data          0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
- .data          0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
- .data          0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
- .data          0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
- .data          0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
+ .data          0x00800100       0x2e KursachV1.o
+ .data          0x0080012e        0x0 i2c_config.o
+ .data          0x0080012e       0x2f ssd1306.o
+ .data          0x0080015d        0x0 reading.o
+ .data          0x0080015d       0x18 ff.o
+ .data          0x00800175        0x0 diskio.o
+ .data          0x00800175       0x9b sms_reader.o
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_mulsi3.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_udivmodsi4.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcmp.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcpy.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memset.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
+ .data          0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
  *(.data*)
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.d*)
-                0x008001bc                . = ALIGN (0x2)
-                0x008001bc                _edata = .
-                0x008001bc                PROVIDE (__data_end, .)
+                0x00800210                . = ALIGN (0x2)
+                0x00800210                _edata = .
+                0x00800210                PROVIDE (__data_end, .)
 
-.bss            0x008001bc       0xa0
-                0x008001bc                PROVIDE (__bss_start, .)
+.bss            0x00800210      0x2a7
+                0x00800210                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
- .bss           0x008001bc        0x0 KursachV1.o
- .bss           0x008001bc        0x0 log.o
- .bss           0x008001bc        0x0 i2c_config.o
- .bss           0x008001bc        0x0 ssd1306.o
- .bss           0x008001bc        0x0 sms_reader.o
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
- .bss           0x008001bc        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
+ .bss           0x00800210        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
+ .bss           0x00800210        0x0 KursachV1.o
+ .bss           0x00800210        0x0 i2c_config.o
+ .bss           0x00800210        0x0 ssd1306.o
+ .bss           0x00800210        0x2 reading.o
+ .bss           0x00800212        0x4 ff.o
+ .bss           0x00800216        0x1 diskio.o
+                0x00800216                SD_type
+ .bss           0x00800217        0x0 sms_reader.o
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_mulsi3.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_udivmodsi4.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_exit.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_copy_data.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/avr5\libgcc.a(_clear_bss.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcmp.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcpy.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memset.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
+ .bss           0x00800217        0x0 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
  *(.bss*)
  *(COMMON)
- COMMON         0x008001bc       0xa0 sms_reader.o
-                0x008001bc                uart_buffer
-                0x0080025c                PROVIDE (__bss_end, .)
-                0x00000b34                __data_load_start = LOADADDR (.data)
-                0x00000bf0                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800217      0x200 diskio.o
+                0x00800217                SD_data
+ COMMON         0x00800417       0xa0 sms_reader.o
+                0x00800417                uart_buffer
+                0x008004b7                PROVIDE (__bss_end, .)
+                0x000047d4                __data_load_start = LOADADDR (.data)
+                0x000048e4                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x0080025c        0x0
-                0x0080025c                PROVIDE (__noinit_start, .)
+.noinit         0x008004b7        0x0
+                0x008004b7                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x0080025c                PROVIDE (__noinit_end, .)
-                0x0080025c                _end = .
-                0x0080025c                PROVIDE (__heap_start, .)
+                0x008004b7                PROVIDE (__noinit_end, .)
+                0x008004b7                _end = .
+                0x008004b7                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -360,19 +437,25 @@ LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5
 .signature
  *(.signature*)
 
-.stab           0x00000000      0x984
+.stab           0x00000000      0xb28
  *(.stab)
  .stab          0x00000000      0x6cc c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
- .stab          0x000006cc       0x9c c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
+ .stab          0x000006cc       0xb4 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcmp.o)
+                                 0xc0 (size before relaxing)
+ .stab          0x00000780       0x84 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memcpy.o)
+                                 0x90 (size before relaxing)
+ .stab          0x00000804       0x6c c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(memset.o)
+                                 0x78 (size before relaxing)
+ .stab          0x00000870       0x9c c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strchr.o)
                                  0xa8 (size before relaxing)
- .stab          0x00000768       0xcc c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
+ .stab          0x0000090c       0xcc c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
                                  0xd8 (size before relaxing)
- .stab          0x00000834      0x150 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
+ .stab          0x000009d8      0x150 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5\libc.a(strstr.o)
                                 0x15c (size before relaxing)
 
-.stabstr        0x00000000      0x1f4
+.stabstr        0x00000000      0x350
  *(.stabstr)
- .stabstr       0x00000000      0x1f4 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
+ .stabstr       0x00000000      0x350 c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5.1/../../../../avr/lib/avr5/crtm328p.o
 
 .stab.excl
  *(.stab.excl)
@@ -401,86 +484,108 @@ LOAD c:/program files (x86)/atmel/avr tools/avr toolchain/bin/../lib/gcc/avr/4.5
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0xa0
+.debug_aranges  0x00000000       0xe0
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x20 KursachV1.o
  .debug_aranges
-                0x00000020       0x20 log.o
+                0x00000020       0x20 i2c_config.o
  .debug_aranges
-                0x00000040       0x20 i2c_config.o
+                0x00000040       0x20 ssd1306.o
  .debug_aranges
-                0x00000060       0x20 ssd1306.o
+                0x00000060       0x20 reading.o
  .debug_aranges
-                0x00000080       0x20 sms_reader.o
+                0x00000080       0x20 ff.o
+ .debug_aranges
+                0x000000a0       0x20 diskio.o
+ .debug_aranges
+                0x000000c0       0x20 sms_reader.o
 
 .debug_pubnames
-                0x00000000      0x1e3
+                0x00000000      0x3a6
  *(.debug_pubnames)
  .debug_pubnames
-                0x00000000       0x3d KursachV1.o
+                0x00000000       0x4f KursachV1.o
  .debug_pubnames
-                0x0000003d       0x2a log.o
+                0x0000004f       0x48 i2c_config.o
  .debug_pubnames
-                0x00000067       0x48 i2c_config.o
+                0x00000097       0xb0 ssd1306.o
  .debug_pubnames
-                0x000000af       0xb0 ssd1306.o
+                0x00000147       0x36 reading.o
  .debug_pubnames
-                0x0000015f       0x84 sms_reader.o
+                0x0000017d       0xce ff.o
+ .debug_pubnames
+                0x0000024b       0xd7 diskio.o
+ .debug_pubnames
+                0x00000322       0x84 sms_reader.o
 
-.debug_info     0x00000000     0x1055
+.debug_info     0x00000000     0x3479
  *(.debug_info)
- .debug_info    0x00000000      0x385 KursachV1.o
- .debug_info    0x00000385      0x341 log.o
- .debug_info    0x000006c6       0xe9 i2c_config.o
- .debug_info    0x000007af      0x366 ssd1306.o
- .debug_info    0x00000b15      0x540 sms_reader.o
+ .debug_info    0x00000000      0x74b KursachV1.o
+ .debug_info    0x0000074b       0xe9 i2c_config.o
+ .debug_info    0x00000834      0x366 ssd1306.o
+ .debug_info    0x00000b9a       0xe9 reading.o
+ .debug_info    0x00000c83     0x1cae ff.o
+ .debug_info    0x00002931      0x5ba diskio.o
+ .debug_info    0x00002eeb      0x58e sms_reader.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000      0x736
+.debug_abbrev   0x00000000      0xbc2
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x16b KursachV1.o
- .debug_abbrev  0x0000016b      0x163 log.o
- .debug_abbrev  0x000002ce       0x8b i2c_config.o
- .debug_abbrev  0x00000359      0x1df ssd1306.o
- .debug_abbrev  0x00000538      0x1fe sms_reader.o
+ .debug_abbrev  0x00000000      0x228 KursachV1.o
+ .debug_abbrev  0x00000228       0x8b i2c_config.o
+ .debug_abbrev  0x000002b3      0x1df ssd1306.o
+ .debug_abbrev  0x00000492       0x8a reading.o
+ .debug_abbrev  0x0000051c      0x29b ff.o
+ .debug_abbrev  0x000007b7      0x21b diskio.o
+ .debug_abbrev  0x000009d2      0x1f0 sms_reader.o
 
-.debug_line     0x00000000     0x10b8
+.debug_line     0x00000000     0x3849
  *(.debug_line)
- .debug_line    0x00000000      0x255 KursachV1.o
- .debug_line    0x00000255      0x241 log.o
- .debug_line    0x00000496      0x193 i2c_config.o
- .debug_line    0x00000629      0x662 ssd1306.o
- .debug_line    0x00000c8b      0x42d sms_reader.o
+ .debug_line    0x00000000      0x3c0 KursachV1.o
+ .debug_line    0x000003c0      0x193 i2c_config.o
+ .debug_line    0x00000553      0x662 ssd1306.o
+ .debug_line    0x00000bb5      0x140 reading.o
+ .debug_line    0x00000cf5     0x20f6 ff.o
+ .debug_line    0x00002deb      0x5fa diskio.o
+ .debug_line    0x000033e5      0x464 sms_reader.o
 
-.debug_frame    0x00000000      0x1c0
+.debug_frame    0x00000000      0x500
  *(.debug_frame)
- .debug_frame   0x00000000       0x50 KursachV1.o
- .debug_frame   0x00000050       0x30 log.o
- .debug_frame   0x00000080       0x50 i2c_config.o
- .debug_frame   0x000000d0       0x80 ssd1306.o
- .debug_frame   0x00000150       0x70 sms_reader.o
+ .debug_frame   0x00000000       0x60 KursachV1.o
+ .debug_frame   0x00000060       0x50 i2c_config.o
+ .debug_frame   0x000000b0       0x80 ssd1306.o
+ .debug_frame   0x00000130       0x30 reading.o
+ .debug_frame   0x00000160      0x260 ff.o
+ .debug_frame   0x000003c0       0xd0 diskio.o
+ .debug_frame   0x00000490       0x70 sms_reader.o
 
-.debug_str      0x00000000      0x31d
+.debug_str      0x00000000      0x957
  *(.debug_str)
- .debug_str     0x00000000      0x144 KursachV1.o
-                                0x189 (size before relaxing)
- .debug_str     0x00000144       0x2d log.o
-                                0x16f (size before relaxing)
- .debug_str     0x00000171       0x4b i2c_config.o
+ .debug_str     0x00000000      0x398 KursachV1.o
+                                0x40e (size before relaxing)
+ .debug_str     0x00000398       0x4e i2c_config.o
                                 0x12f (size before relaxing)
- .debug_str     0x000001bc       0xd3 ssd1306.o
+ .debug_str     0x000003e6       0xd3 ssd1306.o
                                 0x222 (size before relaxing)
- .debug_str     0x0000028f       0x8e sms_reader.o
-                                0x1e4 (size before relaxing)
+ .debug_str     0x000004b9       0x5b reading.o
+                                0x13f (size before relaxing)
+ .debug_str     0x00000514      0x2ef ff.o
+                                0x610 (size before relaxing)
+ .debug_str     0x00000803       0xbe diskio.o
+                                0x27f (size before relaxing)
+ .debug_str     0x000008c1       0x96 sms_reader.o
+                                0x1ec (size before relaxing)
 
-.debug_loc      0x00000000      0x5f9
+.debug_loc      0x00000000     0x4088
  *(.debug_loc)
- .debug_loc     0x00000000       0x28 KursachV1.o
- .debug_loc     0x00000028      0x260 log.o
- .debug_loc     0x00000288       0x49 i2c_config.o
- .debug_loc     0x000002d1      0x1c8 ssd1306.o
- .debug_loc     0x00000499      0x160 sms_reader.o
+ .debug_loc     0x00000000      0x23c KursachV1.o
+ .debug_loc     0x0000023c       0x49 i2c_config.o
+ .debug_loc     0x00000285      0x1c8 ssd1306.o
+ .debug_loc     0x0000044d       0x28 reading.o
+ .debug_loc     0x00000475     0x3354 ff.o
+ .debug_loc     0x000037c9      0x697 diskio.o
+ .debug_loc     0x00003e60      0x228 sms_reader.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -488,17 +593,22 @@ OUTPUT(KursachV1.elf elf32-avr)
 LOAD linker stubs
 
 .debug_pubtypes
-                0x00000000       0xf2
+                0x00000000      0x277
  .debug_pubtypes
-                0x00000000       0x2c KursachV1.o
+                0x00000000       0x91 KursachV1.o
  .debug_pubtypes
-                0x0000002c       0x38 log.o
+                0x00000091       0x1e i2c_config.o
  .debug_pubtypes
-                0x00000064       0x1e i2c_config.o
+                0x000000af       0x38 ssd1306.o
  .debug_pubtypes
-                0x00000082       0x38 ssd1306.o
+                0x000000e7       0x1e reading.o
  .debug_pubtypes
-                0x000000ba       0x38 sms_reader.o
+                0x00000105       0xbb ff.o
+ .debug_pubtypes
+                0x000001c0       0x7f diskio.o
+ .debug_pubtypes
+                0x0000023f       0x38 sms_reader.o
 
-.debug_ranges   0x00000000       0x18
- .debug_ranges  0x00000000       0x18 sms_reader.o
+.debug_ranges   0x00000000      0x170
+ .debug_ranges  0x00000000      0x158 ff.o
+ .debug_ranges  0x00000158       0x18 sms_reader.o

@@ -72,9 +72,9 @@ const uint8_t font_5x8[] PROGMEM = {
     0x02, 0x01, 0x51, 0x09, 0x06, // ?
     0x32, 0x49, 0x79, 0x41, 0x3E, // @
     // A-Z уже есть ...
-    0x7F, 0x09, 0x19, 0x29, 0x46, // [ (используем R как замену)
+    0x7F, 0x41, 0x41, 0x41, 0x00, // [ (используем R как замену)
     0x41, 0x22, 0x14, 0x08, 0x00, // 
-    0x46, 0x29, 0x19, 0x09, 0x7F, // ] (используем R отраженный)
+    0x00, 0x41, 0x41, 0x41, 0x7F, // ] (используем R отраженный)
     0x04, 0x02, 0x01, 0x02, 0x04, // ^
     0x40, 0x40, 0x40, 0x40, 0x40, // _
     0x00, 0x01, 0x02, 0x04, 0x00, // `
@@ -83,7 +83,8 @@ const uint8_t font_5x8[] PROGMEM = {
     0x08, 0x3E, 0x41, 0x41, 0x00, // {
     0x00, 0x00, 0x7F, 0x00, 0x00, // |
     0x00, 0x41, 0x41, 0x3E, 0x08, // }
-    0x08, 0x04, 0x08, 0x10, 0x08 // ~
+    0x08, 0x04, 0x08, 0x10, 0x08, // ~
+    0x7F, 0x7F, 0x7F, 0x7F, 0x7F  // неизвестный сивол
 };
 
 void ssd1306_cmd(uint8_t cmd) {
@@ -193,71 +194,71 @@ void ssd1306_print_char(char c) {
     } else if (c == ' ') {
         char_index = 0;
     } else if (c == '!') {
-        char_index = 36;
-    } else if (c == '"') {
         char_index = 37;
-    } else if (c == '#') {
+    } else if (c == '"') {
         char_index = 38;
-    } else if (c == '$') {
+    } else if (c == '#') {
         char_index = 39;
-    } else if (c == '%') {
+    } else if (c == '$') {
         char_index = 40;
-    } else if (c == '&') {
+    } else if (c == '%') {
         char_index = 41;
-    } else if (c == '\'') {
+    } else if (c == '&') {
         char_index = 42;
-    } else if (c == '(') {
+    } else if (c == '\'') {
         char_index = 43;
-    } else if (c == ')') {
+    } else if (c == '(') {
         char_index = 44;
-    } else if (c == '*') {
+    } else if (c == ')') {
         char_index = 45;
-    } else if (c == '+') {
+    } else if (c == '*') {
         char_index = 46;
-    } else if (c == ',') {
+    } else if (c == '+') {
         char_index = 47;
-    } else if (c == '-') {
+    } else if (c == ',') {
         char_index = 48;
-    } else if (c == '.') {
+    } else if (c == '-') {
         char_index = 49;
-    } else if (c == '/') {
+    } else if (c == '.') {
         char_index = 50;
-    } else if (c == ':') {
+    } else if (c == '/') {
         char_index = 51;
-    } else if (c == ';') {
+    } else if (c == ':') {
         char_index = 52;
-    } else if (c == '<') {
+    } else if (c == ';') {
         char_index = 53;
-    } else if (c == '=') {
+    } else if (c == '<') {
         char_index = 54;
-    } else if (c == '>') {
+    } else if (c == '=') {
         char_index = 55;
-    } else if (c == '?') {
+    } else if (c == '>') {
         char_index = 56;
-    } else if (c == '@') {
+    } else if (c == '?') {
         char_index = 57;
-    } else if (c == '[') {
+    } else if (c == '@') {
         char_index = 58;
-    } else if (c == '\\') {
+    } else if (c == '[') {
         char_index = 59;
-    } else if (c == ']') {
+    } else if (c == '\\') {
         char_index = 60;
-    } else if (c == '^') {
+    } else if (c == ']') {
         char_index = 61;
-    } else if (c == '_') {
+    } else if (c == '^') {
         char_index = 62;
-    } else if (c == '`') {
+    } else if (c == '_') {
         char_index = 63;
-    } else if (c == '{') {
+    } else if (c == '`') {
         char_index = 64;
-    } else if (c == '|') {
+    } else if (c == '{') {
         char_index = 65;
-    } else if (c == '}') {
+    } else if (c == '|') {
         char_index = 66;
-    } else if (c == '~') {
+    } else if (c == '}') {
         char_index = 67;
+    } else if (c == '~') {
+        char_index = 68;
     } else {
-        char_index = 1;  // Для неизвестных символов
+        char_index = 69;  // Для неизвестных символов
     }
     
     // Умножаем на 5 только здесь

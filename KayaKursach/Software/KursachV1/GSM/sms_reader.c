@@ -3,7 +3,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>
-#include "../log.h"
 #include "../display/ssd1306.h"
 
 char uart_buffer[SMS_BUFFER_SIZE];
@@ -25,8 +24,18 @@ void UART_SendString(const char* str) {
 }
 
 char UART_Receive(void) {
-    simDisplay(2,"idk im stuck");
-    while (!(UCSR0A & (1 << RXC0)));
+    simDisplay(2, "idk im stuck");
+
+    uint16_t elapsed = 0;
+
+    while (!(UCSR0A & (1 << RXC0))) {
+        _delay_ms(1);   // небольшая итерация
+        elapsed++;
+        if (elapsed >= 1000) {
+            return 0;  // возвращаем 0 при таймауте
+        }
+    }
+
     return UDR0;
 }
 
@@ -63,9 +72,9 @@ bool SIM800_ReadCommandMessage(char* message) {
     while (j < SMS_BUFFER_SIZE - 1) {
         uart_buffer[j] = UART_Receive();
         
-        simDisplay(2, "recieving");
+        simDisplay(2, "recieving1");
         if (strstr(uart_buffer, "OK\r\n") != NULL){
-            simDisplay(2, "ok");
+            simDisplay(2, "ok1");
             break;
         }
         simDisplay(2, uart_buffer);
@@ -81,9 +90,9 @@ bool SIM800_ReadCommandMessage(char* message) {
     while (i < SMS_BUFFER_SIZE - 1) {
         uart_buffer[i] = UART_Receive();
         
-        simDisplay(2, "recieving");
+        simDisplay(2, "recieving2");
         if (strstr(uart_buffer, "OK\r\n") != NULL){
-            simDisplay(2, "not ok");
+            simDisplay(2, "not ok2");
             break;
         }
         simDisplay(2, uart_buffer);

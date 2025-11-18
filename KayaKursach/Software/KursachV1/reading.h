@@ -4,7 +4,7 @@
 #ifndef _LOG_DEFINED
 #define _LOG_DEFINED
 
-void init_leds(void);
-void blink(int type, int amount);
+void init_buttons(void);
+void handle_buttons(int* counter);
 
 #endif

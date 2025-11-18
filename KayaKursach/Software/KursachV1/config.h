@@ -2,9 +2,8 @@
 #define CONFIG_H
 
 #define F_CPU 16000000UL
-#define LED_Err    5 // PD5
-#define LED_OK     6 // PD6
-#define LED_Stat   7 // PD7
+#define BTN_INC    6 // PD6
+#define BTN_DEC    7 // PD7
 
 /* Definitions for SD card */
 #define MISO_PIN   4 // PB4
